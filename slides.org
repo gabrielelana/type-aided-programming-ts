@@ -1,0 +1,24 @@
+TODO:
+- [ ] Add keybinding for next/prev slide
+- [ ] Slide with TypeScript code tangled to a file
+- [ ] Link to problem file
+- [ ] Link to solution file
+- [ ] Link to playground file
+- [ ] Github shows code correctly and highlighted?
+- [ ] Github follows the link
+
+* Slide 1
+This is an example of a slide
+
+#+BEGIN_SRC typescript :tangle snippets/example.ts
+const x = "foo";
+#+END_SRC
+[[file:snippets/example.ts][Snippet]] [[https://google.it][Snippet Playground]]
+[[file:solutions/example.ts][Solution]] [[http://google.it][Solution Playground]]
+
+
+* Slide 2
+Content
+
+* Slide 3
+Content
