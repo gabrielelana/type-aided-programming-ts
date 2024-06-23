@@ -5,8 +5,8 @@ This is an example of a slide
 const z = "foo";
 #+END_SRC
 
-- [[file:/home/coder/code/type-aided-programming-ts/snippets/example.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBAXjAvDARAMxCFBuAUEA][Playground]])
-- [[file:/home/coder/code/type-aided-programming-ts/solutions/example.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBAnjAvDARAMxCFBuAUEA][Playground]])
+- [[file:snippets/example.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBAXjAvDARAMxCFBuAUEA][Playground]])
+- [[file:solutions/example.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBAnjAvDARAMxCFBuAUEA][Playground]])
 
 * Slide 2
 Content
