@@ -1,0 +1,17 @@
+{
+  "name": "type-aided-programming",
+  "version": "1.0.0",
+  "description": "Type Aided Programming in TypeScript",
+  "scripts": {
+    "lint": "tsc --noEmit && npx eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gabriele Lana <gabriele.lana@gmail.com> (https://github.com/gabrielelana)",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.5.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.5.2",
+    "typescript-eslint": "^7.13.1"
+  }
+}

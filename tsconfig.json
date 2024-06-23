@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "module": "NodeNext",
+    "target": "es2023",
+    "allowJs": true
+  },
+  "include": ["snippets/*.ts", "solutions/*.ts"]
+}
