@@ -1,3 +1,107 @@
+* Introduction
+
+What I mean by "Type Aided Programming"?
+
+- Rule 1, keep the definition of the types as close as possible to the set of
+  values that you know are good
+
+  #+BEGIN_SRC typescript
+  // Bad 🚨
+  type Action = { name: string;
+                  key: string;
+                  value?: string;
+                }
+  #+END_SRC
+
+  #+BEGIN_SRC typescript
+  // Good ✅
+  type Action =
+    | { name: "GET";
+        key: string
+      }
+    | { name: "PUT";
+        key: string;
+        value: string
+      }
+    | { name: "DEL";
+        key: string
+      };
+  #+END_SRC
+
+- Rule 2, be as strict as possibile with the outside world because it's dark and
+  full of terrors
+
+  What I mean is that you should:
+  - Validate incoming requests
+  - Validate incoming messages (Ex. queues)
+  - Validate external configuration
+  - Validate database data (... let's talk about it)
+
+- Rule 3, do not cheat (altough sometimes TypeScript may need a little help)
+
+  Scenario: you have JSON schema for an incoming request and a library able to
+  validate at runtime the request given the schema, since this is done at
+  run-time you have no type-level knowledge of the types. What you can do is to
+  derive the type of the payload of the request from the schema and cast it
+  after the validation.
+
+  #+BEGIN_SRC typescript
+  type Payload = FromSchema<typeof payloadSchema>;
+
+  const validationResult = validate(payload);
+
+  if (validationResult.isOk) {
+    // If the run-time validation is ok then we can safely assume
+    // that the type of payload is the type derived from the schema.
+    // Spoiler: see the last challenge of the workshop.
+    const payload = validationResult.data as unknown as Payload;
+  }
+  #+END_SRC
+
+* More Formally
+
+It's achieved by representing truths or constraints in the language type system
+so that when they become false the compilation fails.
+
+#+BEGIN_SRC typescript :tangle snippets/companies.ts
+const companies = ["Google", "Facebook", "Apple"] as const;
+
+type Companies = (typeof companies)[number];
+
+type CompanyConfiguration = { rating: number };
+
+type Configuration = {
+  [K in Companies]: CompanyConfiguration;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const configuration: Configuration = {
+  Google: { rating: 3 },
+  Facebook: { rating: 1 },
+  Apple: { rating: 2 },
+};
+#+END_SRC
+
+- [[file:snippets/companies.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBKC2AHAhmAlgUwjAvDA2gEQDiIIA5gDYaEA0MhAYssBgEZkDWdDAgoomqEAujGTZQkKAG4AULKgBPRBhgBhEElSZseABRKVIAGZxNKdFgCU+MAFd4bDACdhchctUatYRRrDGaOR2zshQaOC4MADeMKHhYOQAXDD2ji4wAL7uhl7ggcHxEWBR0bIwBADSMGgl3hY6win1qH75QSFhxXLZ8gD0fTBYlLVQALQAJmgQyGzUY2AYAB7jI4swAAK5EMDOaIjjw6N9YCBjdvYQGBNjAG7IzhCyktBmAR1F4M3thV2ReGUKqQKNQUrEiokUgBmLK0cowZisDggThguJdSEwACMsPh-EEGDREOSMAATLjekA][Playground]])
+
+* Why TypeScript?
+
+- Nothing to do with OOP or FP
+-
+
+- Why TypeScript? TypeScript type system is (incidentally) more advanced than what you (probably) think. TypeScript's type system is a full-fledged turing complete programming language, limited, but powerful.
+
+
+- Every programming language is about transforming data, Type-Level TypeScript is not exception, but its purpose is to transform types.
+
+-
+
+We will refer to the subset of TypeScript that deals with types and guides the
+type checker as the "type-level TypeScript programming language"
+
+
+
+
 * Slide 1
 This is an example of a slide
 
