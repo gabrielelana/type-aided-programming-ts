@@ -8,9 +8,10 @@ type Configuration = {
   [K in Companies]: CompanyConfiguration;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const configuration: Configuration = {
   Google: { rating: 3 },
   Facebook: { rating: 1 },
   Apple: { rating: 2 },
 };
+
+export { configuration };

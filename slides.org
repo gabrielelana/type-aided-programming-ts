@@ -2,8 +2,8 @@
 
 What I mean by "Type Aided Programming"?
 
-- Rule 1, keep the definition of the types as close as possible to the set of
-  values that you know are good
+- *Rule 1*, keep the definition of the types as close as possible to the set of
+  values that you know are good.
 
   #+BEGIN_SRC typescript
   // Bad 🚨
@@ -28,16 +28,16 @@ What I mean by "Type Aided Programming"?
       };
   #+END_SRC
 
-- Rule 2, be as strict as possibile with the outside world because it's dark and
-  full of terrors
+- *Rule 2*, be as strict as possibile with the outside world because it's dark and
+  full of terrors.
 
   What I mean is that you should:
-  - Validate incoming requests
-  - Validate incoming messages (Ex. queues)
-  - Validate external configuration
-  - Validate database data (... let's talk about it)
+  - Validate incoming requests.
+  - Validate incoming messages (Ex. queues).
+  - Validate external configuration.
+  - Validate database data (... let's talk about it).
 
-- Rule 3, do not cheat (altough sometimes TypeScript may need a little help)
+- *Rule 3*, do not cheat (altough sometimes TypeScript may need a little help).
 
   Scenario: you have JSON schema for an incoming request and a library able to
   validate at runtime the request given the schema, since this is done at
@@ -74,39 +74,370 @@ type Configuration = {
   [K in Companies]: CompanyConfiguration;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const configuration: Configuration = {
   Google: { rating: 3 },
   Facebook: { rating: 1 },
   Apple: { rating: 2 },
 };
+
+export { configuration };
 #+END_SRC
 
-- [[file:snippets/companies.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBKC2AHAhmAlgUwjAvDA2gEQDiIIA5gDYaEA0MhAYssBgEZkDWdDAgoomqEAujGTZQkKAG4AULKgBPRBhgBhEElSZseABRKVIAGZxNKdFgCU+MAFd4bDACdhchctUatYRRrDGaOR2zshQaOC4MADeMKHhYOQAXDD2ji4wAL7uhl7ggcHxEWBR0bIwBADSMGgl3hY6win1qH75QSFhxXLZ8gD0fTBYlLVQALQAJmgQyGzUY2AYAB7jI4swAAK5EMDOaIjjw6N9YCBjdvYQGBNjAG7IzhCyktBmAR1F4M3thV2ReGUKqQKNQUrEiokUgBmLK0cowZisDggThguJdSEwACMsPh-EEGDREOSMAATLjekA][Playground]])
+- [[file:snippets/companies.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBKC2AHAhmAlgUwjAvDA2gEQDiIIA5gDYaEA0MhAYssBgEZkDWdDAgoomqEAujGTZQkKAG4AULKgBPRBhgBhEElSZseABRKVIAGZxNKdFgCU+MAFd4bDACdhchctUatYRRrDGaOR2zshQaOC4MADeMKHhYOQAXDD2ji4wAL7uhl7ggcHxEWBR0bIwBADSMGgl3hY6win1qH75QSFhxXLZ8pLQZgEdReDN7YVdkXhlFaQU1CmxRYkpAMxZtOUwzKwcIJyLcV0rMACMG1v8ghiHy8kwAEwXvbIYAB6IIM6wsZIFneFIr0gA][Playground]])
 
 * Why TypeScript?
 
-- Nothing to do with OOP or FP
--
-
-- Why TypeScript? TypeScript type system is (incidentally) more advanced than what you (probably) think. TypeScript's type system is a full-fledged turing complete programming language, limited, but powerful.
-
-
-- Every programming language is about transforming data, Type-Level TypeScript is not exception, but its purpose is to transform types.
-
--
+Why TypeScript? TypeScript type system is (incidentally) more advanced than what
+you (probably) think. TypeScript's type system is a full-fledged turing complete
+programming language, limited, but powerful.
 
 We will refer to the subset of TypeScript that deals with types and guides the
-type checker as the "type-level TypeScript programming language"
+type checker as the "Type-Level TypeScript" programming language.
 
+Every programming language is about transforming data, /Type-Level TypeScript/
+is not exception, but its purpose is to *transform types*.
 
+NOTE: This approach is orthogonal to /Object-Oriented Programming/ and
+/Functional Programming/ it can be applied with both.
 
+* Types
+
+You can view types as sets, aka a type is isomorphic to the set of values of
+that type.
+
+#+BEGIN_SRC typescript
+type Primitives =
+  | number
+  | string
+  | boolean
+  | symbol
+  | bigint
+  | undefined
+  | null;
+
+type Literals =
+  | 20
+  | "Hello"
+  | true
+  | 10000n
+
+type DataStructures =
+  | { key1: boolean; key2: number } // objects
+  | { [key: string]: number } // records
+  | [boolean, number] // tuples
+  | number[]; // arrays
+#+END_SRC
+
+* Composing Types
+
+There are two ways of composing types. They are not operators, they are
+constructors, they act on types but they don't manipulate them, they put them in
+a box, we can still access those types and manipulate them later.
+
+** Union Types
+
+You can read as: a value of type ~TurnAction~ can have either a value of type
+~"left"~ or a value of type ~"right"~
+
+If you look at types as sests, the type constructor ~|~ is the equivalent of
+union for sets.
+
+#+BEGIN_SRC typescript
+type TurnAction = "left" | "right";
+#+END_SRC
+
+** Intersection Types
+
+You can read as: a value of type ~Employee~ has a field ~"id"~ of type ~string~,
+a field ~reportTo~ of either type ~Employee~ or ~null~ and it must be also a
+value of type ~Person~.
+
+If you look at types as sests, the type constructor ~&~ is the equivalent of
+intersection for sets.
+
+#+BEGIN_SRC typescript
+type Person = {firstName: string, lastName: string};
+
+type Employee = {id: string, reportTo: Employee | null} & Person;
+#+END_SRC
+
+** Exercises
+
+- What's the type of ~string & "foo"~?
+- What's the type of ~true | false~?
+
+* Special Types: Never
+
+Type ~never~ is the subtype of every type, it's also called /bottom/ (symbol: ⊥)
+because if you visualize the type hierarchies with supertypes at the top are at
+the it occupies the bottom.
+
+If you look at types as sests, the type ~never~ is the empty set.
+
+A ~never~ value can be assigned to every type, but you cannot produce a value of
+type ~never~, and for that it will be very useful.
+
+#+BEGIN_SRC typescript
+type X = never | string; // string
+type Y = never & string; // never
+#+END_SRC
+
+It can always be placed on the right side of an assignment and never on the
+left (TODO: see assignability).
+
+#+BEGIN_SRC typescript :tangle snippets/never.ts
+// @ts-expect-error only never can be assigned to never
+const x: never = null;
+
+// never can be assigned to eveyrhing
+// ...but you have to cheat to create a value of type never
+const y: string = undefined as never;
+
+export { x, y };
+#+END_SRC
+
+- [[file:snippets/never.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEAEBcGcFoFMAeAHeBjSCBOWD2XRcA7AGwE9Qj4A3eAtAQyNACN5QHpoBLAcyoAmoSLko06AKDTFokUIgBcY2gQC8lAK4kSAbgkSQyuqEbM2HLn0HDR4slgAW3IrwNgAdJ5Ya5ZXBtAHBlobEwd4BjkREywIyHYGUGoGEg12XAAzYTJUIywpGV8lWSxnXlB1DSIBeAzneCFOPL0JJGR8OQBveQAaUAoAXwkgA][Playground]])
+
+** Ensure Code is Unreacheable
+
+#+BEGIN_SRC typescript :tangle snippets/unreacheable.ts
+const companies = ["Google", "Facebook", "Apple"] as const;
+
+type Companies = (typeof companies)[number];
+
+function unreacheable(_: never): void {
+  throw new Error("unreacheable");
+}
+
+declare const x: Companies;
+
+switch (x) {
+  case "Google":
+    // do something
+    break;
+  case "Apple":
+    // do something
+    break;
+  case "Facebook":
+    // do something
+    break;
+  default:
+    unreacheable(x);
+}
+
+switch (x) {
+  case "Google":
+    // do something
+    break;
+  case "Apple":
+    // do something
+    break;
+  default:
+    // @ts-expect-error Argument of type `"Facebook"` is not assignable to type `never`
+    unreacheable(x);
+}
+#+END_SRC
+
+- [[file:snippets/unreacheable.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBKC2AHAhmAlgUwjAvDA2gEQDiIIA5gDYaEA0MhAYssBgEZkDWdDAgoomqEAujGTZQkKAG4AULKgBPRBhgBhEElSZseABRKVIAGZxNKdFgCU+MAFd4bDACdhc2cbthgUNOBhezhgsABbBbNR6APoAXDBgGABuLlZxiSBoACYwAN6yMDBQIc4gAO7xGOUAos4lznqEgcHAYcgRNFZyAL7ymRjAlMhBZlIwAB5xGlqWEO4QpWhQLTB6Y1a5+XDiqiRkVDQxmwUA9McwmSAwEJoYRWhg5EcwbEHInHIFwNt8AkKHBSczhcrjc7g8ni9gu9Nl8IDtmKwOCBuP8AadzpdrvBbiF7o8Ac9XtCCn1jMg7JQoKiCk1QuFImtuvJ5otlqt1nlPt9dhQ-k90cCsTi8RCiR8tnCfoIDvygZjQbjwQTIW9xaTyZTqTB0QABKAQAC0GDGKh8RtqIGcMF4znIDgwYFgJkKylUAAMmCx2FxCG6YGhsGAQLBxBA0OQwG1qIVLoZ3Qlks43U9aS16Rh2UygA][Playground]])
+
+* Special Types: Unknown
+
+Type ~unknown~ is the supertype of every type, it's also called /top/ (symbol:
+⊤) because if you visualize the type hierarchies with supertypes are at the top
+the it occupies the top.
+
+If you look at types as sests, the type ~unknown~ is the superset of every set.
+
+#+BEGIN_SRC typescript
+type X = unknown & number; // number
+type Y = unknown | number; // unknown
+#+END_SRC
+
+A value of every type can be assigned to ~unknown~, an ~unknown~ value cannot be
+assigned to anything.
+
+#+BEGIN_SRC typescript
+declare const x: unknown;
+
+// @ts-expect-error
+const y: string = x;
+
+const z: unknown = "anything";
+#+END_SRC
+
+So everything can become ~unknown~ (upcasting) but you cannot do anything with a
+value of type ~unknown~.
+
+* Special Types
+
+- Type ~any~ is another top (⊤) like ~unknown~, but you can do everything with
+  it. To be more precise is the sum type of every type but not quite. Very
+  dangerous, do not use it, use ~unknown~ (always have ~strict: true~ in your
+  ~tsconfig.json~ configuration)
+
+- Type ~undefined~ has a value ~undefined~, ~undefined~ is a subtype of every
+  type, meaning ~undefined~ is another kind of bottom, but this time (as opposed
+  to ~never~) it has a value which is ~undefined~. You can avoid this with
+  ~strictNullChecks: true~ in ~tsconfig.json~ (included in ~strict: true~), with
+  this flag the only value of type ~undefined~ is ~undefined~ itself.
+
+- A declared variable has value ~undefined~ before its first assignment.
+
+- Type ~void~ represents the absence of value, ~undefined~ is a value of type
+  void.
+
+- Type ~null~ has a value ~null~, ~null~ is a subtype of every
+  type, meaning ~null~ is another kind of bottom, but this time (as opposed
+  to ~never~) it has a value which is ~null~. You can avoid this with
+  ~strictNullChecks: true~ in ~tsconfig.json~ (included in ~strict: true~), with
+  this flag the only value of type ~null~ is ~null~ itself.
+
+- A ~null~ value is an object (due to an error in the original JavaScript
+  implementation 🤮)
+
+- TLDR:
+  - Always have ~strict: true~ in your ~tsconfig.json~ file.
+  - Always use ~unknown~ instead of ~any~.
+  - Always use ~undefined~ instead of ~null~.
+
+* Generics
+
+A generic type, is a "parametric polymorphic" type.
+
+#+BEGIN_QUOTE
+In programming languages and type theory, parametric polymorphism allows a
+single piece of code to be given a "generic" type, using variables in place of
+actual types, and then instantiated with particular types as needed.
+#+END_QUOTE
+
+We call variables that stands for a type "Type Variables".
+
+We call a type without type variables a "Complete Type" o "Concrete Type".
+
+We can introduce type variables in different places:
+
+- Interfaces
+  #+BEGIN_SRC typescript
+  interface Container<T> {
+      content: T;
+  }
+  #+END_SRC
+
+- Classes
+  #+BEGIN_SRC typescript
+  class Container<T> {
+      constructor (private readonly content: T) {};
+  }
+  #+END_SRC
+
+- Functions
+  #+BEGIN_SRC typescript
+  const container = <T,>(content: T) => ({content});
+  #+END_SRC
+
+- Type definitions
+  #+BEGIN_SRC typescript
+  type Container<T> = {content: T}
+  #+END_SRC
+
+** Type Constraints
+
+On a /Type Parameter/ we can specify constraints (/Constrained Parametric
+Polymorphism/)
+
+Useful feature because by enforcing constraints on a /Type Parameter/ we can
+tell TypeScript what you can do with a value of that type. Moreover since
+TypeScript is structurally typed the constaints are quite flexible.
+
+#+BEGIN_SRC typescript
+class Greetings<Named extends {name: string}> {
+  constructor(private readonly subject: Named) {}
+
+  render(): string {
+    return `Hello ${this.subject.name}`;
+  }
+}
+#+END_SRC
+
+** Use of Never as Type Parameter
+
+#+BEGIN_SRC typescript
+type Result<T, E> = {_tag: "ok", value: T} | {_tag: "error", value: E}
+
+type Flawless<T> = Result<T, never>;
+#+END_SRC
+
+** Exercise pickOne
+
+#+BEGIN_SRC typescript :tangle snippets/pickOne.ts
+function pickOne(a: TODO, b: TODO): TODO {
+  return Math.random() > 0.5 ? a : b;
+}
+
+const res1 = pickOne(true, false);
+type test1 = Expect<Equal<typeof res1, boolean>>;
+
+const res2 = pickOne(1, 2);
+type test2 = Expect<Equal<typeof res2, 1 | 2>>;
+
+const res3 = pickOne(2, "some string");
+type test3 = Expect<Equal<typeof res3, 2 | "some string">>;
+
+const res4 = pickOne(true, 7);
+type test4 = Expect<Equal<typeof res4, true | 7>>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { test1, test2, test3, test4, TODO };
+#+END_SRC
+
+- [[file:snippets/pickOne.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABABxhA1geTAUwBQCGAXIgCqYAimANIgEYnlUCUjlmiA3gFCKIBOOKCH5IAsgSgALAHT8CYACZwAtnmaIAfIgAMMgKyIA-IgKISdANzcAvt24QEAZygCcTgIyIAvCjRZcPCh+EBxaYAIAGyccZmsoAE9kHEQodygvXwBRAA9k6AAeLIBHECiCxOS4YDdPWjo4OEicBU1NawdnV0EnACYfPwxsfA9aXrjuSpS0l37svJxCkrLIiqScatre2i8AH0Reto7HMBdagGYB1CHA7cQAIidVFJd+GDAAc3uJqdT0y-m+SgRVK5Smmx65zGiH2j2eiFe7y+R3sJzOPQALFd-MMgiEwogAOw-dZ-FxYwGLYHLMHrCHuDG0YKhGFElGTUlMDi+XAANxw-HipNyQIKpEQOByaSUTlS+O0vlIQuSiBpqwAGrQAJoK3iIPBizTqHzacWS6WKWXq4yILwkcYSqU4GWIQ3G7ymx0W2Vam12g56vgmZk4QPmRARaI4DqS5BwfiuThkjJM9J3GZQKHJxlkdiIGzWIA][Playground]])
+- [[file:solutions/pickOne.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABABxhA1geTAUwDwAaANIgJoB8AFAIYBcixiARvaQJT0GIA+ZiA3gChEiAE44oIUUgCy1KAAsAdKOpgAJnAC2lNonKIADEoCsiAPyJqiekwDcggL6DBEBAGcoYnO4CMiAF4UNCxcSihREBwSYGoAG3ccNgcoAE9kHEQoHyh-IIBRAA8M6Dx8gEcQeLw0jLhgbz8SJjg4OJw1cnIHVw8vcXcAJkDgjGwcSl8SQeTBWszsz2GC4pxSiqq4mvScesbBkn9eQa6etzBPRoBmEdQxsIPEACJ3bUzPURgwAHMn2fmsjkbisSlAypVqvM9gMrtMeM9Xlp3hEvr9Ti5zpcBgAWW4hcbhSLRRAAdn+O0BnlxILWYI2kJ20J82JIESi8JJ6LmFIAKpgACKYEa4ABuOFEKQpRVBeB5iBwhWyGncWSJBiCPMlGUQ9K2jAogWEiEosqoegCBjlCqV6hVXEs-noM3lipwysQpt0gUtLptKtIFkQjsQgyNIksbJwYZsiFiCRwPQVyDgoi8-EpuVZOUeiygsIzLMQfMFiEcDiAA][Playground]])
+
+** Exercise mergeTwo
+
+#+BEGIN_SRC typescript :tangle snippets/mergeTwo.ts
+function mergeTwo(a: TODO, b: TODO): TODO {
+  return { ...a, ...b };
+}
+
+const res1 = mergeTwo({ name: "Bob" }, { age: 42 });
+type test1 = Expect<Equal<typeof res1, { name: string } & { age: number }>>;
+
+const res2 = mergeTwo({ greeting: "Hello" }, {});
+type test2 = Expect<Equal<typeof res2, { greeting: string }>>;
+
+const res3 = mergeTwo({}, { greeting: "Hello" });
+type test3 = Expect<Equal<typeof res3, { greeting: string }>>;
+
+const res4 = mergeTwo({ a: 1, b: 2 }, { c: 3, d: 4 });
+type test4 = Expect<
+  Equal<typeof res4, { a: number; b: number } & { c: number; d: number }>
+>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { test1, test2, test3, test4, TODO };
+#+END_SRC
+
+- [[file:snippets/mergeTwo.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABAWwKYCcDmqAqB3OACgEMAuRHAeQBFKAaRAI3KtoEoWbLEBvAKESJ0qKCHRIeiAHQziDGVMaIAvgG4+yvnwgIAzlCGpdARkQBeFBmz4iksMTTkARACE4jJyoaTi2cgBYAJhU2dSgATwAHVEQoIyhTCwBRAA9o6AAeJIBHEGIAGwyI6LhgQxNvRHtHRH10GDBMFUQAMl5EX1RyMBBkRgwVAD5B9W09A2FdYIs0LFwCQklMYREGzGcACVR8-LhPZW9lUL5imLj9acRU9Kgs3IKiqNRS8sDK5dRVxvI6taGRrQ6MD6coAZnMljmNkWB3aHy+60QTi2Oz2ITCT1i8XByTSqEyOTyhVOL0moPeK1g31qUHqjX+oyBIMm-ghs2sCx85GMDGYiGCsMkEHI5MQABMAuiTpjzlBWbibhkBFd7sSnqSjP5KmQqr1+uhVExunqBspWu1hbq+hhDRKrfqhnwAdLohQuBCwKgAG42l0xa74244RCoFJxMBi3SxdAgVCDCE4DGuwkPAAaDAAmvGzMrCBkcINCGxzPHg6Hw5HEKnEAB+RCmciBYvl1ARqP5wvFsylkNh1uVjO1+uIRvKwR12mxscjxDAAq6VCjUORODoAySWU8rEXBiy0WyrVu2gqdRAA][Playground]])
+- [[file:solutions/mergeTwo.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABAWwKYCcDmqAqB3OAHgA0AaRATQD4AKAQwC5EzEAjJigSieMQDJKiAN4AoRInSooIdEiGIAdErrklC1ogC+AbhGaRIiAgDOUCamMBGRAF4UGbPjg15YOmiYAiAEJxWnrXJ5OmwmABYAJi1OXSgATwAHVEQoCyhrOwBRAA8k6EJMgEcQOgAbQnikuGBzKyDENw9EU3QYMEwtfmFEENQmMBBkVgwtKipdQxMzSWMouzQsXAIXRExJKTbMLwAJVFLSuADNIM0YkUrk1NM5xBy8qALisorE1GraiPq11A32phbNqNxgYjGBTLUAMy2eyLJwuY7db6-LaITy7faHaKxV4pNJQrK5VD5IolcoXd4zCFfdawP7NKCtdpAiag8EzMLQhaOZbBJiWcjsRBRBHyCBMKmIAAm4Sx5xxVygHIJ90IYluTzJrwpFjC9UYDUGw3Q2jY-UNI00XVFZqGGBN0oNtvQoxEwLlSUQOAA8gARL3QsCoABudvdyTuRIeOEQqGyqTAkuMKXQIFQVGhOGxHpJzxY1FsapohBwtE4tnT0dj8cTzEQAH5ENYmBEy1XUAmk8XS+XPTG4+2axR643EM21eIGwzU+PR4hgGVjKgJrGEnB0GZ5Ar+bjruQFRKFbrPb7-ToREA][Playground]])
 
 * Slide 1
 This is an example of a slide
 
 #+BEGIN_SRC typescript :tangle snippets/example.ts
-const z = "foo";
+export const z = "foo";
 #+END_SRC
 
 - [[file:snippets/example.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBAXjAvDARAMxCFBuAUEA][Playground]])

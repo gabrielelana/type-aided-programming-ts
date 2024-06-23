@@ -1,1 +1,1 @@
-const z = "foo";
+export const z = "foo";
