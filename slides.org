@@ -441,6 +441,129 @@ export { test1, test2, test3, test4, TODO };
 - [[file:snippets/mergeTwo.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8gMwFd4TRLAbxQAW3AAnAObgAKgHcGACkwAuUPIDyAEW0AaUNk079ASlN7toAN7lQoKeER8pY26AB0PzEZ9e2KAAvgDc5MHcTKKQiE5QAIygALwS0nJKqp7wmJKaAEQAQgzY+SFGnphymgAsAEwh5uGIAJ4ADuCgiFCISakAokQdQgA8-QCOfJjQI60dDDzxkAkVoDl5oLFSCDIhoABkdqBV4JrwfOLY0iEAfDfh5NHwsUsNqZKyCsoqnjLOLjsCgAJcDQaAMMrBCrBJrkOadbqxN6gQbDRBjSbTWbtcALV6rP7gAHwGSaLY7W73KIxOLOSAAZhSaU+mR+UKOhOJpNA+RBYIhjWaOK6PUZAyG7HREymM3heLp9IJ-2EJLJiG2JMpDyeLzpNSZHwy30qmhWxk0DXZniYmkVoFQtUFcOFiMQ+vFaJGDhRmNlOPlUBqqw0awuVykoXNocu12CByONuj4cjDqTsZu5Cpzo6WmsTMIADdpEKc6jJSN5BASOB4KhIF0pHxwDcmfIS51pViABpGACaLeS3pUFZuKnMKRbleI3Vr9a7oAA-KAkhbx9Oa3XQCOxxOtFWZ5ve4vl6ALd7HEv1U3z6fQDxppBwA9iG0GFI4p5XWbXXUjK67a6Qa5voIThEAA][Playground]])
 - [[file:solutions/mergeTwo.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABAWwKYCcDmqAqB3OAHgA0AaRATQD4AKAQwC5EzEAjJigSieMQDJKiAN4AoRInSooIdEiGIAdErrklC1ogC+AbhGaRIiAgDOUCamMBGRAF4UGbPjg15YOmiYAiAEJxWnrXJ5OmwmABYAJi1OXSgATwAHVEQoCyhrOwBRAA8k6EJMgEcQOgAbQnikuGBzKyDENw9EU3QYMEwtfmFEENQmMBBkVgwtKipdQxMzSWMouzQsXAIXRExJKTbMLwAJVFLSuADNIM0YkUrk1NM5xBy8qALisorE1GraiPq11A32phbNqNxgYjGBTLUAMy2eyLJwuY7db6-LaITy7faHaKxV4pNJQrK5VD5IolcoXd4zCFfdawP7NKCtdpAiag8EzMLQhaOZbBJiWcjsRBRBHyCBMKmIAAm4Sx5xxVygHIJ90IYluTzJrwpFjC9UYDUGw3Q2jY-UNI00XVFZqGGBN0oNtvQoxEwLlSUQOAA8gARL3QsCoABudvdyTuRIeOEQqGyqTAkuMKXQIFQVGhOGxHpJzxY1FsapohBwtE4tnT0dj8cTzEQAH5ENYmBEy1XUAmk8XS+XPTG4+2axR643EM21eIGwzU+PR4hgGVjKgJrGEnB0GZ5Ar+bjruQFRKFbrPb7-ToREA][Playground]])
 
+* Structural Typing, Subtyping & Assignability
+
+A programming language is /Structurally Typed/ when type compatibility and
+equivalence are determined by the type's actual structure or definition and not
+by other characteristics such as its name or place of declaration.
+
+When ~X~ can be used in place of ~Y~ then ~X~ is a subtype of ~Y~ therefore ~X~
+is assignable to Y (see "substitution principle").
+
+When ~X~ is a subtype of ~Y~ therefore ~X~ is assignable to ~Y~.
+
+#+BEGIN_SRC typescript
+declare const x: SUBTYPE;
+
+const y: SUPERTYPE = x;
+#+END_SRC
+
+You can also say that /Upcasting/ is always safe, /Downcasting/ must be proved.
+
+In a structurally typed programming language types can be structurally inferred
+and not declared.
+
+#+BEGIN_SRC typescript :tangle snippets/turns.ts
+type Turns = "left" | "right";
+type Directions = "up" | "down" | "left" | "right";
+
+// Directions is a subtype of Turns
+const t: Turns = "left";
+const d: Directions = t;
+#+END_SRC
+
+Structural typing is more flexible than nominal typing.
+
+Dig deeper [[https://github.com/microsoft/TypeScript-New-Handbook/blob/master/reference/Assignability.md][here]] and [[https://www.typescriptlang.org/docs/handbook/type-compatibility.html][here]].
+
+** Branded Types
+
+Structural typing sometimes is not what you want.
+
+#+BEGIN_SRC typescript :tangle snippets/structuralClasses.ts
+class Foo {
+  constructor(public readonly id: string) {}
+}
+
+class Bar {
+  constructor(public readonly id: string) {}
+}
+
+// Probably not what you want
+const x: Bar = new Foo("123");
+
+export { x };
+#+END_SRC
+
+- [[file:snippets/structuralClasses.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYGwhgzhAEBiD29oG8BQ1rHgOwgFwCcBXYPeAgCgAciAjEAS2GgIFMwATHEAT2gY4AuaPgINsAcwCUKAL6p5qUJBgAhMARTpMOUSTKUa9Ji3ZdsvfkJGFx0uQtSoA9M+gAFAvFph6fbPB40ADuABZgQTzwRCFg2HhKukEAHsLqmgC80NiswXCIFABEAIwATADMhVIA3E6syVTkQcjQydCytUA][Playground]])
+
+Brands to the rescue
+
+#+BEGIN_SRC typescript :tangle snippets/brandedClasses.ts
+class Foo {
+  private readonly __brand = "Foo";
+  constructor(public readonly id: string) {}
+}
+
+class Bar {
+  private readonly __brand = "Bar";
+  constructor(public readonly id: string) {}
+}
+
+// @ts-expect-error type Foo is not assignable to type Bar
+const x: Bar = new Foo("123");
+
+export { x };
+#+END_SRC
+
+We can also brand primitives to improve type safety
+
+#+BEGIN_SRC typescript :tangle snippets/brandedPrimitives.ts
+const __brand = Symbol("__brand");
+
+type Brand<B> = { readonly [__brand]: B };
+
+type Branded<T, B> = T & Brand<B>;
+
+const makeBrand =
+  <const B>(_b: B) =>
+  <T>(t: T): Branded<T, B> =>
+    t as unknown as Branded<T, B>;
+
+type UserID = Branded<string, "UserID">;
+const makeUserID = makeBrand("UserID");
+type User = { id: UserID };
+
+const user: User = { id: makeUserID("123") };
+
+type CompanyID = Branded<string, "CompanyID">;
+const makeCompanyID = makeBrand("CompanyID");
+type Company = { id: CompanyID };
+
+const company: Company = { id: makeCompanyID("123") };
+
+function joinCompany(_user: UserID, _company: CompanyID): void {
+  // irrelevant
+}
+
+joinCompany(user.id, company.id);
+
+// @ts-expect-error Argument of type 'CompanyID' is not assignable to parameter of type 'UserID'
+joinCompany(company.id, user.id);
+
+console.log(user);
+// {
+//   "id": "123"
+// }
+
+console.log(company);
+// {
+//   "id": "123"
+// }
+#+END_SRC
+
+- [[file:snippets/brandedPrimitives.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBA+nARgJwIZgCYwLwwMoCeAtoiADYAUARAiuhlQJQDcAUK1AQA4CmMAQmkwAefgD4cMAN4xkPVBnBkCMANq0hGALoAuATAC+bDtz6D6PDMIAqAGgETc1mADIBm0WOOhIsIqgBrHnNMHFYYGGEfaAcKJD1+RhwxcMjrMQooPWtGBM1LG3txZNSI2FQIGABXMACwEAB3MBgK9wsrOwdjTl4YAFUIHmQASQARSRCMAuhkAEswAHN7KgGhsaovVmi-QJ5VkfHcfyDJ6n31lhNe-ckZWYw9c-Gjdm3qweRHj9uYe71jvYfMbUACMACYAMxMQzdUwwADCICIXHQBDGE3yVhm8yWMCoiORqPWmzeAIJKLAaMOMABp3xSIpVKYbB6fHJqJ+fwRDKJz284BioEJlL07MpnIeNN2YqpoMh0JerAAZjVgFBZuAYAArEDzGVxKofL5rUb2OBCxminmUsa5GAAN11WCkqQA9K7fsg5GQePb0FBWAZ2Dq9daCBRDUMAHT3ewW1ExjCXVjumAAASgEAAtDwAB68NU5r0gZAwACCyAWVSIPDAsBASpgrJgAHIZWMW79KvVyhAILMFmBUIgfU2QDAUWga1AhjAG024S2ni3WCGwPr45TE-ZI8hE8nouQeFGyCAFhGPpdUy7UxEqPcqHoqOCoSmPUGtgKjyezxRNwQrw9G8PTvB8nxfKg30MVggA][Playground]])
+
 * Slide 1
 This is an example of a slide
 
