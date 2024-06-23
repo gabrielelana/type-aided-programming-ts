@@ -1,0 +1,13 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2023,
+    "warnOnUnsupportedTypeScriptVersion": false
+  },
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "off"
+  }
+}

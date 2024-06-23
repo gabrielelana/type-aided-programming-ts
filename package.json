@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Type Aided Programming in TypeScript",
   "scripts": {
-    "lint": "tsc --noEmit && npx eslint .",
+    "lint": "tsc --noEmit && npx eslint --quiet .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Gabriele Lana <gabriele.lana@gmail.com> (https://github.com/gabrielelana)",
