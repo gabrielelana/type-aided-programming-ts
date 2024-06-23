@@ -379,17 +379,17 @@ function pickOne(a: TODO, b: TODO): TODO {
   return Math.random() > 0.5 ? a : b;
 }
 
-const res1 = pickOne(true, false);
-type test1 = Expect<Equal<typeof res1, boolean>>;
+const r01 = pickOne(true, false);
+type T01 = Expect<Equal<typeof r01, boolean>>;
 
-const res2 = pickOne(1, 2);
-type test2 = Expect<Equal<typeof res2, 1 | 2>>;
+const r02 = pickOne(1, 2);
+type T02 = Expect<Equal<typeof r02, 1 | 2>>;
 
-const res3 = pickOne(2, "some string");
-type test3 = Expect<Equal<typeof res3, 2 | "some string">>;
+const r03 = pickOne(2, "some string");
+type T03 = Expect<Equal<typeof r03, 2 | "some string">>;
 
-const res4 = pickOne(true, 7);
-type test4 = Expect<Equal<typeof res4, true | 7>>;
+const r04 = pickOne(true, 7);
+type T04 = Expect<Equal<typeof r04, true | 7>>;
 
 type TODO = never;
 type Expect<T extends true> = T;
@@ -398,11 +398,11 @@ type Equal<X, Y> =
     ? true
     : false;
 
-export { test1, test2, test3, test4, TODO };
+export { T01, T02, T03, T04, TODO };
 #+END_SRC
 
-- [[file:snippets/pickOne.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8gMwFd4TRLAbxQAB1icA8oQAUmAFygAKtIAi0gDShsytZoCU+jdNABvcqFAAncIj42xAWUyIWAOhuZ4qBgFs5Q1AAPlAABg8AVlAAflBMUGVsAG5yAF9uJlFIRFsoAEZQAF4JKQ5ZcDlEGz5wHR5MaEhwQzTEAE9xcFBEKEQi0oBRIm6hAB4hgEc+JvHO7oYefMgCnWwGBjwfEJC08mz4XJWAJhKymXk10BO28gWevtyz4dH2REmZuYel050igA+N12+0OxzskAAzOdJJcqicdAAiSABHq5GwIADmiLuD16-WhrzGH2ms2g8y64F+EMhOjOQORqNA6KxiJBWRyeQhABYYeVKtVavVQAB2XGU-G5XlE96fMkUxbLHk6Gp1UBAkXs+4SgxmUqEABu4Bs7QlI2J4xUEBI4F8kF6QrCpRUpu6oFJcwAGjoAJpOqygOSWkJBEphK3EPp20CeuKgIrKW7WqOoe3B0PFcPJ22p0A+uMJm4B6zxVXgYtJUCNZrgfbEcQMGx5cySgYq-oI1u01vcnS60DpNJAA][Playground]])
-- [[file:solutions/pickOne.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABABxhA1geTAUwDwAaANIgJoB8AFAIYBcixiARvaQJT0GIA+ZiA3gChEiAE44oIUUgCy1KAAsAdKOpgAJnAC2lNonKIADEoCsiAPyJqiekwDcggL6DBEBAGcoYnO4CMiAF4UNCxcSihREBwSYGoAG3ccNgcoAE9kHEQoHyh-IIBRAA8M6Dx8gEcQeLw0jLhgbz8SJjg4OJw1cnIHVw8vcXcAJkDgjGwcSl8SQeTBWszsz2GC4pxSiqq4mvScesbBkn9eQa6etzBPRoBmEdQxsIPEACJ3bUzPURgwAHMn2fmsjkbisSlAypVqvM9gMrtMeM9Xlp3hEvr9Ti5zpcBgAWW4hcbhSLRRAAdn+O0BnlxILWYI2kJ20J82JIESi8JJ6LmFIAKpgACKYEa4ABuOFEKQpRVBeB5iBwhWyGncWSJBiCPMlGUQ9K2jAogWEiEosqoegCBjlCqV6hVXEs-noM3lipwysQpt0gUtLptKtIFkQjsQgyNIksbJwYZsiFiCRwPQVyDgoi8-EpuVZOUeiygsIzLMQfMFiEcDiAA][Playground]])
+- [[file:snippets/pickOne.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8gMwFd4TRLAbxQAB1icA8oQAUmAFygAKtIAi0gDShsytZoCU+jdNABvcqFAAncIj42xAWUyIWAOhuZ4qBgFs5Q1AAPlAABg8AVlAAflBMUGVsAG5yAF9uJlFIRFtwgEZQAF4JKQ5ZcDlEGz5wHR5MaEhwQzTEAE9xcFVCktAAUSJuoQAeAYBHPibRzu6GHnyCnWwGBjwfEJC08mz4XPyAJn7JGXll0EO28jmelXDj0qGRxHGpmduFo50igB9LrY7PYHGzhADMJ3KlTkhx0ACJIAEerkbAgAOZw663XoQp7DdivSbTaCzLrgL6gsE6Y7-BFI0Ao9FwwFZHJ5UEAFkhZyqNTqOgA7Fiyb0uXiXm9iaT5otOTo+T1-gKWTcRQYzKVCAA3cA2doi54E0YqCAkcC+SCgBVhUoqfXdQbvEkADR0AE0bVZQHJjSEgiUwibiIhzahLc64qAisorqaQxbQL7-cVA3HQ5a3ZHo5cvdZ4grc0lQI1muAdsRxAwbHlzL0LvdYTidPcOc3TKB0mkgA][Playground]])
+- [[file:solutions/pickOne.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABABxhA1geTAUwDwAaANIgJoB8AFAIYBcixiARvaQJT0GIA+ZiA3gChEiAE44oIUUgCy1KAAsAdKOpgAJnAC2lNonKIADEoCsiAPyJqiekwDcggL6DBEBAGcoYwwEZEAXhQ0LFxKKFEQHBJgagAbdxw2BygAT2QcRAAVXwDEAFEAD3ToPDyARxA4vFT0uGBvHxImODhYnDVycgdXDy9RQwAmXNQMbBxKRsQBpMEajOyhwMLiqFKKqrm67wGSP14Bzu63ME9vAGZh4LHKHcQAIndtDM9RGDAAczuZuazDC6WijgSuVKrFqmkcFt+mcSENeA8nogXm9PocXMdTv0ACyXUahcKREgAdm+EN+OIBKzWoPBtXq2JIBIyvCJaNmZMymAAIphcrgAG44UTJMnLIGrTKIHAFKA4DTuRBMgyBTIi9L5dZgxgUALCRCUPCZKh6fwGSXS2XyhgWRB+ejTKUyuXqBWG40BM2Oy0uviWO1TPUiSxMwM2RAxeI4brS5BwURefi-SYLEjZGHk1Pc3mOBxAA][Playground]])
 
 ** Exercise mergeTwo
 
@@ -414,18 +414,18 @@ function mergeTwo(a: TODO, b: TODO): TODO {
   return { ...a, ...b };
 }
 
-const res1 = mergeTwo({ name: "Bob" }, { age: 42 });
-type test1 = Expect<Equal<typeof res1, { name: string } & { age: number }>>;
+const r01 = mergeTwo({ name: "Bob" }, { age: 42 });
+type T01 = Expect<Equal<typeof r01, { name: string } & { age: number }>>;
 
-const res2 = mergeTwo({ greeting: "Hello" }, {});
-type test2 = Expect<Equal<typeof res2, { greeting: string }>>;
+const r02 = mergeTwo({ greeting: "Hello" }, {});
+type T02 = Expect<Equal<typeof r02, { greeting: string }>>;
 
-const res3 = mergeTwo({}, { greeting: "Hello" });
-type test3 = Expect<Equal<typeof res3, { greeting: string }>>;
+const r03 = mergeTwo({}, { greeting: "Hello" });
+type T03 = Expect<Equal<typeof r03, { greeting: string }>>;
 
-const res4 = mergeTwo({ a: 1, b: 2 }, { c: 3, d: 4 });
-type test4 = Expect<
-  Equal<typeof res4, { a: number; b: number } & { c: number; d: number }>
+const r04 = mergeTwo({ a: 1, b: 2 }, { c: 3, d: 4 });
+type T04 = Expect<
+  Equal<typeof r04, { a: number; b: number } & { c: number; d: number }>
 >;
 
 type TODO = never;
@@ -435,10 +435,10 @@ type Equal<X, Y> =
     ? true
     : false;
 
-export { test1, test2, test3, test4, TODO };
+export { T01, T02, T03, T04, TODO };
 #+END_SRC
 
-- [[file:snippets/mergeTwo.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8gMwFd4TRLAbxQAW3AAnAObgAKgHcGACkwAuUPIDyAEW0AaUNk079ASlN7toAN7lQoKeER8pY26AB0PzEZ9e2KAAvgDc5MHcTKKQiE5QAIygALwS0nJKqp7wmJKaAEQAQgzY+SFGnphymgAsAEwh5uGIAJ4ADuCgiFCISakAokQdQgA8-QCOfJjQI60dDDzxkAkVoDl5oLFSCDIhoABkdqBV4JrwfOLY0iEAfDfh5NHwsUsNqZKyCsoqnjLOLjsCgAJcDQaAMMrBCrBJrkOadbqxN6gQbDRBjSbTWbtcALV6rP7gAHwGSaLY7W73KIxOLOSAAZhSaU+mR+UKOhOJpNA+RBYIhjWaOK6PUZAyG7HREymM3heLp9IJ-2EJLJiG2JMpDyeLzpNSZHwy30qmhWxk0DXZniYmkVoFQtUFcOFiMQ+vFaJGDhRmNlOPlUBqqw0awuVykoXNocu12CByONuj4cjDqTsZu5Cpzo6WmsTMIADdpEKc6jJSN5BASOB4KhIF0pHxwDcmfIS51pViABpGACaLeS3pUFZuKnMKRbleI3Vr9a7oAA-KAkhbx9Oa3XQCOxxOtFWZ5ve4vl6ALd7HEv1U3z6fQDxppBwA9iG0GFI4p5XWbXXUjK67a6Qa5voIThEAA][Playground]])
+- [[file:snippets/mergeTwo.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8gMwFd4TRLAbxQAW3AAnAObgAKgHcGACkwAuUPIDyAEW0AaUNk079ASlN7toAN7lQoKeER8pY26AB0PzEZ9e2KAAvgDc5MHcTKKQiE4ADACMoAC8EtJySqqe8JiSmgBEAEIM2AUhRp6YcpoALABMIebhiACeAA7gWkmpoACiRJ1CADx9AI58mNDDbZ0MPAmJlaC5+aCxUggyIaAAZHag1eCa8Hzi2NIhAHxX4eTR8LEJjWmSsgrKKp4yzi5bhQAJcDQaAMcrBSrBZrkWZdeTxF79QbsRCjCZTGYdcDzZ7LH7gP7wGSaDZba63KIxOJSeIAZl6b0yn1sEIO+MJxNABSBILBTRaWO69LSAyGqPGk2msJxNNpeN+wiJJMQmyJ5LuDyeNNqDIyH2yh00S2MmkarM8TE0ctAqDq-JhgvhOpFyJGDn66KlWJl8Vqyw0KzOFykoRNgfOl2CewOlvDwdDtrjkau5ApDs6WmsvUIADdpAKM6KUcN5BASOB4KhIKAVXxwFdevIC10JRiABpGACaDZS7pUJauKnMqQbpeIiArVdAbdAAH5QMlTcPx5PqwOhyOtGWJ5Xq525wvQKb3Y557XwCej6AeFNIOA7sR2gwpHFPPDjfD6kZ4dand+s2E5BAA][Playground]])
 - [[file:solutions/mergeTwo.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABAWwKYCcDmqAqB3OAHgA0AaRATQD4AKAQwC5EzEAjJigSieMQDJKiAN4AoRInSooIdEiGIAdErrklC1ogC+AbhGaRIiAgDOUCamMBGRAF4UGbPjg15YOmiYAiAEJxWnrXJ5OmwmABYAJi1OXSgATwAHVEQoCyhrOwBRAA8k6EJMgEcQOgAbQnikuGBzKyDENw9EU3QYMEwtfmFEENQmMBBkVgwtKipdQxMzSWMouzQsXAIXRExJKTbMLwAJVFLSuADNIM0YkUrk1NM5xBy8qALisorE1GraiPq11A32phbNqNxgYjGBTLUAMy2eyLJwuY7db6-LaITy7faHaKxV4pNJQrK5VD5IolcoXd4zCFfdawP7NKCtdpAiag8EzMLQhaOZbBJiWcjsRBRBHyCBMKmIAAm4Sx5xxVygHIJ90IYluTzJrwpFjC9UYDUGw3Q2jY-UNI00XVFZqGGBN0oNtvQoxEwLlSUQOAA8gARL3QsCoABudvdyTuRIeOEQqGyqTAkuMKXQIFQVGhOGxHpJzxY1FsapohBwtE4tnT0dj8cTzEQAH5ENYmBEy1XUAmk8XS+XPTG4+2axR643EM21eIGwzU+PR4hgGVjKgJrGEnB0GZ5Ar+bjruQFRKFbrPb7-ToREA][Playground]])
 
 * Structural Typing, Subtyping & Assignability
@@ -790,20 +790,20 @@ export { T01, T02, T03, T04 };
 
 type GetName<X> = TODO;
 
-type r01 = GetName<{ name: "Gabriele" }>;
-type T01 = Expect<Equal<r01, "Gabriele">>;
+type R01 = GetName<{ name: "Gabriele" }>;
+type T01 = Expect<Equal<R01, "Gabriele">>;
 
-type r02 = GetName<{ name: string; age: number }>;
-type T02 = Expect<Equal<r02, string>>;
+type R02 = GetName<{ name: string; age: number }>;
+type T02 = Expect<Equal<R02, string>>;
 
-type r03 = GetName<{ age: number }>;
-type T03 = Expect<Equal<r03, undefined>>;
+type R03 = GetName<{ age: number }>;
+type T03 = Expect<Equal<R03, undefined>>;
 
-type r04 = GetName<{
+type R04 = GetName<{
   name: { firstName: string; lastName: string };
   age: number;
 }>;
-type T04 = Expect<Equal<r04, { firstName: string; lastName: string }>>;
+type T04 = Expect<Equal<R04, { firstName: string; lastName: string }>>;
 
 type TODO = never;
 type Expect<T extends true> = T;
@@ -815,8 +815,8 @@ type Equal<X, Y> =
 export { T01, T02, T03, T04, TODO };
 #+END_SRC
 
-- [[file:snippets/inferName.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8xATwAdwoAOLhEAOUwBbcAB4AGgD5QAXlAAVAPIARTQG5ufQaABOABgCMqkWMkzZAb1Dxp4AFygARMJwnY4PE9QAF9FAyMhdUtrAFEiQSZEWRiARwBXTGhZcwsAGi8fbD8A8E9FMMMBIXMAJmtRCVdHZ1cPSEQ-eABzPVBMLvdnNKlscBMQioiNMzq1OISk1Iys2vz2zq7ygx4q0zMAZnrbJqd+wfhh0fHQ8N2ow7n49kX0zOyD-LT4VHAAMwRwKgtpVjOYACxHRr2BzkUAtGQeJz-EztOyDdYIHqgaCYVGtUAY7ohAxws4eC4jMYGG47YxRCGPBbJV4rMxg-JI2AoqHojqY3o4vEIgl8omhCq0yI6TTWQgANypktA82esnUEBI4G+kFAHTS4GUanUt2MSze8nyAE1DbDQAAKNWKO0ASlUynVxEQWtQOvkoAA-KArB4aq7Pd6dY6XW6NBqvdrQJaA0HQCHbXDA3rwOnU6BfplIOBtsR+AwTIhQE4onlpjV8vd62z69LieQgA][Playground]])
-- [[file:solutions/inferName.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBA4hwDkCGBbCAeAGgPigXikyggA9gIA7AEwGcoBvKC1CALigEsKAzCAJygIoAXygB+QVHYBXahG5cIVANwAoVaEhQ+ABgCM+WPGRp0jZmnYAiGEgBGfDhAA2EKyOxrN0ACr7DAKIkkADGwOgBAI7SSM7ounoANFA29o4ubtie6t7aOgBMhnCILGZMLOw0wI4UAObKUEi1bEzSKHb8Hl7gvgWBwRBhEdGx8QXJVTW1WWoaPXkAzEXGpYxNLRRtHQLC2bl+SwRBoeFRMXG6C8myVPKKVDM587oALMslpvSqUOWWDFAKPhVEwtSZcepQZxIYEVKBguoiNQ-dbsTbtfhqXbdLR+N5HAZDM6jV7JRiAmF-eEQqEU0HVcEebJzHEAeQAIizDBQIAA3DHM6DHQbhHzEMiUWhQarSCC4Ag+bGCkZxTDJACacu+UAAFOgfNhtQBKfC4UWkcjUOhECQGdj5Y3miV0PUG414U1ii2StXiKC2qD5LU-CTSiBBqQA2I0CCzUhgAD2fGA-z8SSgfnyyQOWZ0Lyz7M5wjUQA][Playground]])
+- [[file:snippets/inferName.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8xATwAdwoAOLhEAOUwBbcAB4AGgD5QAXlAAVAPIARTQG5ufQaABKABgCMqkWMkzZAb1Dxp4AFygARMJwAnWOB4nqAAvooGRkLqltYAokSCTIiysQCOAK6Y0LLmFgA0Xj7Y-oHgnorhhgJC5gBM1qISro7Orh6QiP7wAOZ6oJjd7s7pUtjgvqGVkRpm9Wrxiclpmdl1BR1d3RUGPNWmZgDMDbbNTgND8CNjE2ERe9FH8wnsSxlZOYcF6fCo4ABmCHAqG2VWM5gALMcmvYHORQK0ZB4nADfB07EMNgheqBoJg0W1QJieqEDPDzh5LqNxgZbrtjNFIU9Fik3qszOCCsjYKjoRjOli+rj8YjCfziWFKnSojpNNZCAA3alS0ALF6ydQQEjgH6QUCddLgZRqdR3YzLd7yAoATSNcNAAAp1Yp7QBKVTKDXERDa1C6+SgAD8oCsHlqbq9Pt1Ttd7o0mu9OtAVsDwdAobt8KD+vAGbToD+WUg4B2xH4DF8iFATmi+RmtQKDwb7IbMpJ5CAA][Playground]])
+- [[file:solutions/inferName.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBA4hwDkCGBbCAeAGgPigXikyggA9gIA7AEwGcoBvKC1CALigEsKAzCAJygIoAXygB+QVHYBXahG5cIVANwAoVaEhQASgAYAjPljxkadI2Zp2AIhhIARnw4QANhGsjsazdAAqBowBREkgAY2B0QIBHaSQXdD19ABooWwcnV3dsL3UfHV0AJiM4RBZzJhZ2GmAnCgBzZSgkOrYmaRR7fk9vcD9CoJCIcMiYuITClOrauuy1DV78gGZikzLGZtaKds6BYRy8-2WCYLCI6Nj4vUWU2Sp5RSpZ3IW9ABYV0rN6VSgKqwYoAo+NVTK0plwGlAXEgQZUoOD6iI1L8Nuwth1+Go9j0tP53sdBsNzmM3ilGEDYf8EZDoZSwTUIZ4cvNcQB5AAirKMFAgADdMSzoCchhFfMQyJRaFAatIILgCL4cULRvFMCkAJryn5QAAU6F82B1AEp8LgxaRyNQ6EQJIZ2AUTRbJXR9YaTXgzeLLVL1eIoHaoAVtb8JDKIMGpIC4jQIHNSGAAPZ8YAA-zJKD+AopQ7Z3SvbMcrnCNRAA][Playground]])
 
 #+BEGIN_SRC typescript :tangle snippets/and.ts
 // eslint-disable-next-line
@@ -824,17 +824,17 @@ export { T01, T02, T03, T04, TODO };
 
 type AND<A, B> = TODO;
 
-type r01 = AND<true, true>;
-type T01 = Expect<Equal<r01, true>>;
+type R01 = AND<true, true>;
+type T01 = Expect<Equal<R01, true>>;
 
-type r02 = AND<false, false>;
-type T02 = Expect<Equal<r02, false>>;
+type R02 = AND<false, false>;
+type T02 = Expect<Equal<R02, false>>;
 
-type r03 = AND<true, false>;
-type T03 = Expect<Equal<r03, false>>;
+type R03 = AND<true, false>;
+type T03 = Expect<Equal<R03, false>>;
 
-type r04 = AND<false, true>;
-type T04 = Expect<Equal<r04, false>>;
+type R04 = AND<false, true>;
+type T04 = Expect<Equal<R04, false>>;
 
 type TODO = never;
 type Expect<T extends true> = T;
@@ -846,8 +846,173 @@ type Equal<X, Y> =
 export { T01, T02, T03, T04, TODO };
 #+END_SRC
 
-- [[file:snippets/and.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8xATwAdwoAIIA5ACIAeYQBpQAIQB8oALygAKgHlxmgNzc+g0ACcADAEZVIiZMTGAruDl3Hi-YaHqLVgKJFBTIiSPgCO9pjQkmbmzg7gim4GAkJmAExWYlIAZhGQTqA50HmJHhqm6Wp+AUGh4ZFpcoXFiTzJJqYAzBk2LvlN8e5tXl2V-uw1YRFRnY258S2lZgAs3dlzsa6DRl4ro9XBk-WmS7NF8-qt29qaVoQAbuDGW0JV45LqECTg8KiQoL3KNTqZ6gWpTAAacgAmoDyKBQAAKd6KBEASlUyg+xEQ31+oHBoAA-KBLAAuUCpdHY3F-ZFojEaT44n5-KFEkmgcmpOHw9m9Hnw8n9C7EfgMYyIUAAbzKMTKqTkw0Vx0V11AAF99EA][Playground]])
-- [[file:solutions/and.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAggcgEQDwwDRQEID4oF4oDaamAulBAB7AQB2AJgM6HABOArhOqx2QPxTdoALigAzAIYAbBhADcAKHmhIUFgAYAjHliIkgruwhYFy6ABVN2gKIVIAY2BIrARzZSk6jQY5Zji06pqAEza8MgS0pxiUjJ+ARYh+Db2ji5ukh7B6BGxfkrg0OoAzKG6+tGRcQVQFiVJthAOTq7uxdkxRnkB6gAspeEd3kYm1RZ99SnN6Zk97ZVdowDyCIvaNBAAbhAsIyrJjY5m5FS0jAKGOPhmu9Bp7gAa6ACal-JQUAAUSGZYHwCUeBwR0o1HoTHuUH4WhEQQBINOTG+vwBuCBx1BZyekKg0KgQTe72xggJ7xEOTkikoYAA9ixgFAAN41TToBKstRFdmzGrLVYAXwUQA][Playground]])
+- [[file:snippets/and.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8xATwAdwoAIIA5ACIAeYQBpQAIQB8oALygAKgHlxmgNzc+g0ACUADAEZVIiZMQAnAK7g59p4v2Gh6i1YCiRQSZESV8ARwdMaEkzcxdHcEV3AwEhMwAmKzEpADNIyGdQXOh8pM8NUwy1f0DgsIio9LkikqSeFJNTAGZMm1cC5oSPdu9uqoD2WvDI6K6mvITWsrMAFh6c+bi3IaNvVbGakKmG02W54oX9Np3tTStCADdwO22haonJdQgScHhUSFA+so1OoXqA6tMABpyACaQPIoFAAAoPopEQBKVTKT7ERA-P6gCGgAD8oEsAC5QGkMTi8f8UejMRovrjfv9ocTSaAKWl4QiOX1eQiKQNLsR+Aw7IhQABvcqxcppOQjJUnJU3UAAX30QA][Playground]])
+- [[file:solutions/and.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAggcgEQDwwDRQEID4oF4oDaamAulBAB7AQB2AJgM6HABOArhOqx2QPxTdoALigAzAIYAbBhADcAKHmhIUAEoAGAIx5YiJIK7sIWBcugAVLToCiFSAGNgSawEc2UpBs2GOWE4rM1dQAmHXhkCWlOMSkZf0DLUPxbBydXd0lPEPRIuP8lcGgNAGYwvQMYqPjCqEtS5LsIR2c3DxKc2ON8wI0AFjKIzp9jUxrLfobUloys3o6q7rGAeQQlnRoIADcIFlGVFKanc3IqWkYBIxx8cz3odI8ADXQATSv5KCgACiRzLE+ASjwOGOlGo9CYDyg-G0ImCgNBZyYPz+gNwwJOYPOzyhUBhUGC7w+OMEhI+IlyckUlDAAHsWMAoABvWpadCJNnqYocua1FZrAC+CiAA][Playground]])
+
+* Objects & Records
+
+What can you ask to an object at type level?
+
+#+BEGIN_SRC typescript :tangle snippets/objectKeysAndValues.ts
+type User = { name: string; age: number; isAdmin: boolean };
+
+type Age = User["age"]; // => number
+type Role = User["isAdmin"]; // => boolean
+
+type NameOrAge = User["name" | "age"]; // => string | number
+
+type Keys = keyof User; // "name" | "age" | "isAdmin"
+
+type Values = User[keyof User]; // string | number | boolean
+
+export { Age, Role, NameOrAge, Keys, Values };
+#+END_SRC
+
+- [[file:snippets/objectKeysAndValues.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAqgzhATlAvFA3lAdgQwLYQBcUcwiAllgOYDcUOVR2ArngEZJ3lwCCAJnkrE2AexEAbCDixQAvjQBQC0JCg9GqWAkQBtAEQMIegLp0A9GdQA+FuyTLw0AEoToaeEn3d+grCfOWKDairtJKKtAAcvgQAPKI6m5annq4BHpQAD5QBoz+UBbWJGSUVFm2HIjhjlAA0hAgcJoA1g0iAGbJiAE5aUbluf3Zet4ClHrVqgBqOOLMEE3u2jqtIB1dpgWWpBTU5VisleUhkmEKEAAeYCKIwBhqjAA0UC6Sz9EE8YnP9Y3PM3MFnJFEA][Playground]])
+
+** Subtyping and Constructors
+
+#+BEGIN_SRC typescript :tangle snippets/objectSubtyping.ts
+type FirstName = { firstName: string };
+type LastName = { lastName: string };
+
+type AllOf = FirstName & LastName;
+type OneOf = FirstName | LastName;
+
+const r01: AllOf = { firstName: "Gabriele", lastName: "Lana" };
+
+const r02: OneOf = { firstName: "Gabriele" };
+const r03: OneOf = { lastName: "Lana" };
+
+// FirstName & LastName is subtype of FirstName | LastName
+const r04: OneOf = r01;
+// FirstName & LastName is subtype of FristName
+const r05: FirstName = r01;
+// FirstName & LastName is subtype of LastName
+const r06: LastName = r01;
+
+export { r02, r03, r04, r05, r06 };
+#+END_SRC
+
+- [[file:snippets/objectSubtyping.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAYglgJwM7AHIEMC20C8UDeUAZoihtgFxQoJwB2A5lAL4DcAUKJFADLplZcBKABt+aQVRr0mbdp3DQAgiJEB5IlDzxkE7FABkvceQgcu0NXQgatsUnugAfYwOwd2AYwD2dFFAQABgBGKhV1TTxCEl1TKgAiAHF0ACNaCBEIeIAaURNJKHi+OnR4lg8fP2AAwIAmKisbSOEYtwgE5LS4DKzyr19-IIBmButbKLy2hOLSvvYAenn7WMFDV0coOCRqAFcUiyhvTR02qBc+Nv6qmoAWUaa7IOCOReXTowuNrd39xUPj2iXSqDQIAVioJw2eCeLyWkNMa0+CO+SD2ByO61MVxBADYqEjVtCQh4IAAPMDeBDVQhBWq5Yb0wI3Rmgxk4vpAA][Playground]])
+
+** Records
+
+The definition of a ~Record~ is the following, where:
+- ~K~ is considered as an union type
+- ~Key~ will iterate over every value in ~K~
+- ~V~ will be the type of the values
+
+#+BEGIN_SRC typescript
+type Record<K, V> = {[Key in K]: V}
+#+END_SRC
+
+#+BEGIN_SRC typescript :tangle snippets/records.ts
+type FromStringToBooleans = Record<string, boolean>;
+
+// The same as
+// type FromStringToBooleans = { [key: string]: boolean };
+
+type RecordOfBooleans = Record<string, boolean>;
+
+type InputState = { [Key in "valid" | "edited" | "focused"]: boolean };
+// { valid: boolean
+// ; edited: boolean
+// ; focused: boolean
+// }
+
+export { FromStringToBooleans, RecordOfBooleans, InputState };
+#+END_SRC
+
+- [[file:snippets/records.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAYgTgewLYGVhwJYDsDmAVBAIQQQBsIBDLAZygF4oAlCAYwTgBMAea9bHADRQARiXJUAfAG4AUDID08qHgAW0ahSTQK1BUtCRYiVH1wFiZSjXpQA3lADaAawggAXFF6ZcAXQ+jLKigAX1kZA2hmNk4AeQAzC3FrBij2bi9+IQCk6TkIqABJLDAAV2A0CmBoBnsHAGlXKGwoACIANwpSDA4WqAAfVogODCqe-ta4hBYS6iGWvxExKxDZRTsoDq6OfyWqPSgpKCGRoZ3ArH3DyenZ7cXz-eC5CAAPMHZgdfhkNG98Il2NCEqViCUB1CERVK5WAlWgoRkQA][Playground]])
+
+** Exercises
+
+First look at [[https://www.typescriptlang.org/docs/handbook/utility-types.html][Omit, Pick and Partial]]
+
+#+BEGIN_SRC typescript :tangle snippets/optionalId.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+// Combine Partial, Omit and Pick to implement MakeIdOptional
+
+type MakeIdOptional<O extends { id: unknown }> = TODO;
+
+type R01 = MakeIdOptional<{
+  id: number;
+  name: string;
+  age: unknown;
+}>;
+
+type T01 = Expect<Equal<R01, { id?: number } & { name: string; age: unknown }>>;
+
+type R02 = MakeIdOptional<{
+  id: string;
+  title: string;
+  content: string;
+}>;
+
+type T02 = Expect<
+  Equal<R02, { id?: string } & { title: string; content: string }>
+>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { T01, T02, TODO };
+#+END_SRC
+
+- [[file:snippets/optionalId.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrcysAYQYC22BOFAAFTACdEsTNAA0oAPIDYiUJnipxsTqEQNQsAQAc8A8ElABZTB3ABJVEpMyG8Od0QBPE6Nv2Ti5uHtAAPEoQJJaokKAA3kaoAFygAK7wHPAMAO7woAC+AHygALygACpKACJKANxevqIASgAMAIxlNnaOzq6w7nJh8eSgSanwaULgkg1jHhapkIiSCADmcxpr4KkZWbnwDcUN5D5+lR1dAKJEfkyIYVcAjmlDbe2KibCoAPwTU9gZoVQAAyBKgBY7UDLVbwDZbKF7bJ5QpFIonM4tVoAJi6AV6wQGoWGo3G0JW602MkQeCWFLhmyY7kQlkQdNhG3Ix0a5wqOOut3YD1Jz1e4Ta2M+ST+5I5wLBiWptNllNATKQrPZ61R5HRPNEVVqXUIADcZg1MaAbncHhUoiytHEVmlwCVyhULU0rS8hgANRQATTdpIAFGEKkUQwBKMolO3EB2xUC+0A-UCdVLYmMJmJxcORmOlOP23OgAOp9OgTOksZp53gGtV0AAMzkkHAJ2IJgY0nBfI+F0llRqkQKDSAA][Playground]])
+- [[file:solutions/optionalId.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/PTAEGEHsFsCMEsB2BTUAFAhgJwC7wwDYA0oA8tPDqBogCbrwDGA1qDpKPNAA4HLTJEVALIZmyAJK1S3PJESEAUIpChuWZDjzIsAWngBzRJA2KcAT26pR4qTLkKCAHlKhkADxyDaAZ1ABvTloALlAAV0RmYwB3RFAAXwA+UABeRVB0bDxCJzQmZhcSACJ4WiLE5IAyMgocQtASssSAbmULK1AAJQAGAEZU0BtJaVl4eRz-dKDQxDC4HVaMhQFQnxwsJANF6gNkUIioyFjWpNazS1QAFT6BgFF3K0Y624BHMJye3pJA0oB+GbmsB0CVA1UCyz2oDWG0QWx2kIOMTiSRabQuXW6ACYBkM7KNxs5JhlSqt1pttngcHxSTCtlNGPIvEIaeTFKc0R1rtiUqB7o86lNXu9nD1Md8gv8oWTYSCwWxKNSpbTmqAGUJBDgWTKkopUedOaQACKuHkoABuC31qD5yCeTkubk83j86zCyGSPMurXa1reOQAGiQAJoeqYACntiTDAEpUskHR4mb5QP7QL9QP1QpjY4nnaBIzG46AE066H4g2mM6As1MMunXcha9XQAAzQg+ZBnDzcExUQLXL7FrEkS5G1zxVpAA][Playground]])
+
+#+BEGIN_SRC typescript :tangle snippets/assign.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+// Implement at type-level the same behaviour of `{...a, ...b}` at run-time
+
+type Assign<A, B> = TODO;
+
+const assign = <A, B>(obj1: A, obj2: B): Assign<A, B> => ({
+  ...obj1,
+  ...obj2,
+});
+
+// Override `id`
+type R01 = Assign<{ name: string; id: number }, { id: string }>;
+type T01 = Expect<Equal<R01, { name: string } & { id: string }>>;
+
+// Override `age` and `role`
+type R02 = Assign<
+  { name: string; age: string; role: string },
+  { age: 42; role: "admin" }
+>;
+type T02 = Expect<Equal<R02, { name: string } & { age: 42; role: "admin" }>>;
+
+// No overlap
+type R03 = Assign<{ name: string; id: number }, { age: number }>;
+type T03 = Expect<Equal<R03, { name: string; id: number } & { age: number }>>;
+
+// Using type inference from values
+const R04 = assign({ name: "Bob", id: 4 }, { id: "3" });
+type T04 = Expect<Equal<typeof R04, { name: string } & { id: string }>>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { T01, T02, T03, T04, TODO };
+#+END_SRC
+
+- [[file:snippets/assign.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrcysASQFsADnn7gkoTIlCIAnoPx4AbuGjS2oLKNDZwLTItgMArgCdQDAGagABgG8AdI8wAaUI-vYAvtYlSTR+GREWFFuWXlQAEFISFgAc3gAHkjXACEAPlAAXlAAFQB5ABF8gG5uJgZ4SClMGPj4bNBktPSACgZsACsARgAuKNcOzoAmftSASn7o2ITm0AzszNbbclA3RyHu51X1+yHh7c9xsp5QfOUTE1hUcBtr63Jw24AlAAZuxun6xNtQeExRP1qld4HESqBrv14EZ+DozJ5XL9IRpECC4qBPOkyk88u9GgBRIjyJiIRL4gCORkw0ESby2oF+-0BKLRGNAADIGRDUEDUQh0ZisdwqOdwJdrrdrJg4uAfJh4KgbCYGHgHji3sNPnVZjtGQDwLy0eDpQaWfzwcq8Ib+Rjtmtfib+gAWYYWlWmgBEmFQ-AQHox5CFONyr01OUJxNJFKpNI1iL++utoLZnIdMudrtAls93t98H9gpOVAAcgxzBdoJhBI85C9XgBmLUzJJ65nA83cqEwuG2rmOv7dsUYoO13GN8NE9hRynU2kN+NM03t0Hg5HQ2FDzwcvvpgcb+HpIWnACqsWTOIQFjFYiYtwsyv4oEU1KMUHIFSqUjeTsatWbywTZkPVSDoPVcZEfwRLlkQ9esC2OGsIhDH8J0jMkZxpJ5LFAb8F0TM1ky3VNOwIgVDxOYMinyRpCAubFRwjKdElyCASDEVBIGkfxwEyHJcnoiJo1nAANVwAE1eJ2VpmLacZFjyVjEHYzjhNAAB+UAPn6YY5OIJSFU4mTWjkrJMhYvTlNAMT1M00BtJ2NYNNRV8HLs0ALGpSBwBOYhBAYEwpF+EN6RDA4x1cZCIqojEyiAA][Playground]])
+- [[file:solutions/assign.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/PTAEEkFsAcBsFNLwHYBdQEN2oJ7XgLQIBu8soqAFvKAM4ZKgBG8lGxAlgPYCuATqC4AzUAAMA3gDppGADShpkpgF9RmdHx7ICqDkgBQ+3PlABBWrQ4BzZAB5T8gEIA+UAF5Q40AG0A0qA5kUABreBxhUAB5SA5Ue3lQ8JEXAF0ALjM-FNBlUAAyUEcAbkMAYy5kWnQMC2sgj3jC5wAKLiYAKwBGDIdBDoAmDMcASh7am0aXd1dm8X1QBWk2rtl5xcll-tXlYZL9ECjSPj4OABMaUTPRIzwaACUABk73M3G7L2QGeAyqk+QrIoBU4ZZA8SAsATKeReM4-VB-Kw5ZwlYw0AAqTxeAFEAB74UpxLEARx4GFgtkenWhoE+SDhCJy+U8QPpgURymcyMMB0iRxO5zEGCs8DUGGQpzEfC4CGuqNAj36L3Mlgmaw+X1Z-0BQu+dHhbMBUoQmvZqwWXh1GQALP1DdLdQAiDCnGLIB05fRcuUYxUeXH4wkkskUh5bZm03W-NmMgoW4XW22gI2O52u90crn7MAAOS4giOsAw0BuJkeAGYlW9bOq6XqEYDYTSwRCctTLU3wfBIV7bqAMRW-Xj4ATbMTSeTy9SIyaG8COy3crHMPH512kZmDgBVSz-Ci9wJCLsoUo0IRSyCgYhknjwWj6cqVdCPK0vGoq5CzGka0AOxxtB3yI2L5QsyjYOmW6a7CW6IPC+g4BqOQbkqiETPlO35Rrui6gXOmHspyezepEAAikQvMg8BHCivb+sOcRoqA8A4qgKCnLQFCaPArgeGi1EmGOwYABryAAmtxazNLYaItMM0x9oxzGsexgmgAA-KAzwZP0slMSx4rsVJMlyQxulKaAIlqRpoBaWsCzqfCN62dZoBCGStDwHsTHQFwfDoF4GJUn2obyP2IWwSFJFkcoJRAA][Playground]])
 
 * Slide 1
 This is an example of a slide

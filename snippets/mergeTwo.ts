@@ -5,18 +5,18 @@ function mergeTwo(a: TODO, b: TODO): TODO {
   return { ...a, ...b };
 }
 
-const res1 = mergeTwo({ name: "Bob" }, { age: 42 });
-type test1 = Expect<Equal<typeof res1, { name: string } & { age: number }>>;
+const r01 = mergeTwo({ name: "Bob" }, { age: 42 });
+type T01 = Expect<Equal<typeof r01, { name: string } & { age: number }>>;
 
-const res2 = mergeTwo({ greeting: "Hello" }, {});
-type test2 = Expect<Equal<typeof res2, { greeting: string }>>;
+const r02 = mergeTwo({ greeting: "Hello" }, {});
+type T02 = Expect<Equal<typeof r02, { greeting: string }>>;
 
-const res3 = mergeTwo({}, { greeting: "Hello" });
-type test3 = Expect<Equal<typeof res3, { greeting: string }>>;
+const r03 = mergeTwo({}, { greeting: "Hello" });
+type T03 = Expect<Equal<typeof r03, { greeting: string }>>;
 
-const res4 = mergeTwo({ a: 1, b: 2 }, { c: 3, d: 4 });
-type test4 = Expect<
-  Equal<typeof res4, { a: number; b: number } & { c: number; d: number }>
+const r04 = mergeTwo({ a: 1, b: 2 }, { c: 3, d: 4 });
+type T04 = Expect<
+  Equal<typeof r04, { a: number; b: number } & { c: number; d: number }>
 >;
 
 type TODO = never;
@@ -26,4 +26,4 @@ type Equal<X, Y> =
     ? true
     : false;
 
-export { test1, test2, test3, test4, TODO };
+export { T01, T02, T03, T04, TODO };

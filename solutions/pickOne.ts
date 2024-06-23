@@ -2,17 +2,17 @@ function pickOne<X, Y>(a: X, b: Y): X | Y {
   return Math.random() > 0.5 ? a : b;
 }
 
-const res1 = pickOne(true, false);
-type test1 = Expect<Equal<typeof res1, boolean>>;
+const r01 = pickOne(true, false);
+type T01 = Expect<Equal<typeof r01, boolean>>;
 
-const res2 = pickOne(1, 2);
-type test2 = Expect<Equal<typeof res2, 1 | 2>>;
+const r02 = pickOne(1, 2);
+type T02 = Expect<Equal<typeof r02, 1 | 2>>;
 
-const res3 = pickOne(2, "some string");
-type test3 = Expect<Equal<typeof res3, 2 | "some string">>;
+const r03 = pickOne(2, "some string");
+type T03 = Expect<Equal<typeof r03, 2 | "some string">>;
 
-const res4 = pickOne(true, 7);
-type test4 = Expect<Equal<typeof res4, true | 7>>;
+const r04 = pickOne(true, 7);
+type T04 = Expect<Equal<typeof r04, true | 7>>;
 
 type TODO = never;
 type Expect<T extends true> = T;
@@ -21,4 +21,4 @@ type Equal<X, Y> =
     ? true
     : false;
 
-export { test1, test2, test3, test4, TODO };
+export { T01, T02, T03, T04, TODO };

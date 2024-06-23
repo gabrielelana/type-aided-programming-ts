@@ -3,17 +3,17 @@
 
 type AND<A, B> = TODO;
 
-type r01 = AND<true, true>;
-type T01 = Expect<Equal<r01, true>>;
+type R01 = AND<true, true>;
+type T01 = Expect<Equal<R01, true>>;
 
-type r02 = AND<false, false>;
-type T02 = Expect<Equal<r02, false>>;
+type R02 = AND<false, false>;
+type T02 = Expect<Equal<R02, false>>;
 
-type r03 = AND<true, false>;
-type T03 = Expect<Equal<r03, false>>;
+type R03 = AND<true, false>;
+type T03 = Expect<Equal<R03, false>>;
 
-type r04 = AND<false, true>;
-type T04 = Expect<Equal<r04, false>>;
+type R04 = AND<false, true>;
+type T04 = Expect<Equal<R04, false>>;
 
 type TODO = never;
 type Expect<T extends true> = T;
