@@ -1,3 +1,6 @@
+// eslint-disable-next-line
+// @ts-nocheck
+
 function pickOne(a: TODO, b: TODO): TODO {
   return Math.random() > 0.5 ? a : b;
 }

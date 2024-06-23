@@ -1,3 +1,6 @@
+// eslint-disable-next-line
+// @ts-nocheck
+
 function mergeTwo(a: TODO, b: TODO): TODO {
   return { ...a, ...b };
 }

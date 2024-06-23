@@ -259,13 +259,13 @@ assigned to anything.
 #+BEGIN_SRC typescript :tangle snippets/unknown.ts
 declare const x: unknown;
 
-// @ts-expect-error
+// @ts-expect-error `unknown` cannot be assigned to type `string` (downcast)
 const y: string = x;
 
 const z: unknown = "anything";
 #+END_SRC
 
-- [[file:snippets/unknown.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/CYUwxgNghgTiAEYD2A7AzgF3gDwFzwFcUBrFJAdxQG4AoGgenvgAEM0BaEbAB3A05gwkMGsnRYAnvkwwAligDm8ALw5ao1JngAvfEVIUUK+ACIoKCRgAW8hSdpA][Playground]])
+- [[file:snippets/unknown.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/CYUwxgNghgTiAEYD2A7AzgF3gDwFzwFcUBrFJAdxQG4AoGgenvgAEM0BaEbAB3A05gwkMeAAMipCilGIoKMlgBGCKGjQBLAOYoQweBiT6AnrzGYY6lJpkAKYFLCqMAShrJ0WI-nOXN8ALw4tG6omPAAXvgSZJQB8ABEckYYABa+8bRAA][Playground]])
 
 So everything can become ~unknown~ (upcasting) but you cannot do anything with a
 value of type ~unknown~.
@@ -372,6 +372,9 @@ type Flawless<T> = Result<T, never>;
 ** Exercise pickOne
 
 #+BEGIN_SRC typescript :tangle snippets/pickOne.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
 function pickOne(a: TODO, b: TODO): TODO {
   return Math.random() > 0.5 ? a : b;
 }
@@ -398,12 +401,15 @@ type Equal<X, Y> =
 export { test1, test2, test3, test4, TODO };
 #+END_SRC
 
-- [[file:snippets/pickOne.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABABxhA1geTAUwBQCGAXIgCqYAimANIgEYnlUCUjlmiA3gFCKIBOOKCH5IAsgSgALAHT8CYACZwAtnmaIAfIgAMMgKyIA-IgKISdANzcAvt24QEAZygCcTgIyIAvCjRZcPCh+EBxaYAIAGyccZmsoAE9kHEQodygvXwBRAA9k6AAeLIBHECiCxOS4YDdPWjo4OEicBU1NawdnV0EnACYfPwxsfA9aXrjuSpS0l37svJxCkrLIiqScatre2i8AH0Reto7HMBdagGYB1CHA7cQAIidVFJd+GDAAc3uJqdT0y-m+SgRVK5Smmx65zGiH2j2eiFe7y+R3sJzOPQALFd-MMgiEwogAOw-dZ-FxYwGLYHLMHrCHuDG0YKhGFElGTUlMDi+XAANxw-HipNyQIKpEQOByaSUTlS+O0vlIQuSiBpqwAGrQAJoK3iIPBizTqHzacWS6WKWXq4yILwkcYSqU4GWIQ3G7ymx0W2Vam12g56vgmZk4QPmRARaI4DqS5BwfiuThkjJM9J3GZQKHJxlkdiIGzWIA][Playground]])
+- [[file:snippets/pickOne.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8gMwFd4TRLAbxQAB1icA8oQAUmAFygAKtIAi0gDShsytZoCU+jdNABvcqFAAncIj42xAWUyIWAOhuZ4qBgFs5Q1AAPlAABg8AVlAAflBMUGVsAG5yAF9uJlFIRFsoAEZQAF4JKQ5ZcDlEGz5wHR5MaEhwQzTEAE9xcFBEKEQi0oBRIm6hAB4hgEc+JvHO7oYefMgCnWwGBjwfEJC08mz4XJWAJhKymXk10BO28gWevtyz4dH2REmZuYel050igA+N12+0OxzskAAzOdJJcqicdAAiSABHq5GwIADmiLuD16-WhrzGH2ms2g8y64F+EMhOjOQORqNA6KxiJBWRyeQhABYYeVKtVavVQAB2XGU-G5XlE96fMkUxbLHk6Gp1UBAkXs+4SgxmUqEABu4Bs7QlI2J4xUEBI4F8kF6QrCpRUpu6oFJcwAGjoAJpOqygOSWkJBEphK3EPp20CeuKgIrKW7WqOoe3B0PFcPJ22p0A+uMJm4B6zxVXgYtJUCNZrgfbEcQMGx5cySgYq-oI1u01vcnS60DpNJAA][Playground]])
 - [[file:solutions/pickOne.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABABxhA1geTAUwDwAaANIgJoB8AFAIYBcixiARvaQJT0GIA+ZiA3gChEiAE44oIUUgCy1KAAsAdKOpgAJnAC2lNonKIADEoCsiAPyJqiekwDcggL6DBEBAGcoYnO4CMiAF4UNCxcSihREBwSYGoAG3ccNgcoAE9kHEQoHyh-IIBRAA8M6Dx8gEcQeLw0jLhgbz8SJjg4OJw1cnIHVw8vcXcAJkDgjGwcSl8SQeTBWszsz2GC4pxSiqq4mvScesbBkn9eQa6etzBPRoBmEdQxsIPEACJ3bUzPURgwAHMn2fmsjkbisSlAypVqvM9gMrtMeM9Xlp3hEvr9Ti5zpcBgAWW4hcbhSLRRAAdn+O0BnlxILWYI2kJ20J82JIESi8JJ6LmFIAKpgACKYEa4ABuOFEKQpRVBeB5iBwhWyGncWSJBiCPMlGUQ9K2jAogWEiEosqoegCBjlCqV6hVXEs-noM3lipwysQpt0gUtLptKtIFkQjsQgyNIksbJwYZsiFiCRwPQVyDgoi8-EpuVZOUeiygsIzLMQfMFiEcDiAA][Playground]])
 
 ** Exercise mergeTwo
 
 #+BEGIN_SRC typescript :tangle snippets/mergeTwo.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
 function mergeTwo(a: TODO, b: TODO): TODO {
   return { ...a, ...b };
 }
@@ -432,7 +438,7 @@ type Equal<X, Y> =
 export { test1, test2, test3, test4, TODO };
 #+END_SRC
 
-- [[file:snippets/mergeTwo.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABAWwKYCcDmqAqB3OACgEMAuRHAeQBFKAaRAI3KtoEoWbLEBvAKESJ0qKCHRIeiAHQziDGVMaIAvgG4+yvnwgIAzlCGpdARkQBeFBmz4iksMTTkARACE4jJyoaTi2cgBYAJhU2dSgATwAHVEQoIyhTCwBRAA9o6AAeJIBHEGIAGwyI6LhgQxNvRHtHRH10GDBMFUQAMl5EX1RyMBBkRgwVAD5B9W09A2FdYIs0LFwCQklMYREGzGcACVR8-LhPZW9lUL5imLj9acRU9Kgs3IKiqNRS8sDK5dRVxvI6taGRrQ6MD6coAZnMljmNkWB3aHy+60QTi2Oz2ITCT1i8XByTSqEyOTyhVOL0moPeK1g31qUHqjX+oyBIMm-ghs2sCx85GMDGYiGCsMkEHI5MQABMAuiTpjzlBWbibhkBFd7sSnqSjP5KmQqr1+uhVExunqBspWu1hbq+hhDRKrfqhnwAdLohQuBCwKgAG42l0xa74244RCoFJxMBi3SxdAgVCDCE4DGuwkPAAaDAAmvGzMrCBkcINCGxzPHg6Hw5HEKnEAB+RCmciBYvl1ARqP5wvFsylkNh1uVjO1+uIRvKwR12mxscjxDAAq6VCjUORODoAySWU8rEXBiy0WyrVu2gqdRAA][Playground]])
+- [[file:snippets/mergeTwo.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8gMwFd4TRLAbxQAW3AAnAObgAKgHcGACkwAuUPIDyAEW0AaUNk079ASlN7toAN7lQoKeER8pY26AB0PzEZ9e2KAAvgDc5MHcTKKQiE5QAIygALwS0nJKqp7wmJKaAEQAQgzY+SFGnphymgAsAEwh5uGIAJ4ADuCgiFCISakAokQdQgA8-QCOfJjQI60dDDzxkAkVoDl5oLFSCDIhoABkdqBV4JrwfOLY0iEAfDfh5NHwsUsNqZKyCsoqnjLOLjsCgAJcDQaAMMrBCrBJrkOadbqxN6gQbDRBjSbTWbtcALV6rP7gAHwGSaLY7W73KIxOLOSAAZhSaU+mR+UKOhOJpNA+RBYIhjWaOK6PUZAyG7HREymM3heLp9IJ-2EJLJiG2JMpDyeLzpNSZHwy30qmhWxk0DXZniYmkVoFQtUFcOFiMQ+vFaJGDhRmNlOPlUBqqw0awuVykoXNocu12CByONuj4cjDqTsZu5Cpzo6WmsTMIADdpEKc6jJSN5BASOB4KhIF0pHxwDcmfIS51pViABpGACaLeS3pUFZuKnMKRbleI3Vr9a7oAA-KAkhbx9Oa3XQCOxxOtFWZ5ve4vl6ALd7HEv1U3z6fQDxppBwA9iG0GFI4p5XWbXXUjK67a6Qa5voIThEAA][Playground]])
 - [[file:solutions/mergeTwo.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/GYVwdgxgLglg9mABAWwKYCcDmqAqB3OAHgA0AaRATQD4AKAQwC5EzEAjJigSieMQDJKiAN4AoRInSooIdEiGIAdErrklC1ogC+AbhGaRIiAgDOUCamMBGRAF4UGbPjg15YOmiYAiAEJxWnrXJ5OmwmABYAJi1OXSgATwAHVEQoCyhrOwBRAA8k6EJMgEcQOgAbQnikuGBzKyDENw9EU3QYMEwtfmFEENQmMBBkVgwtKipdQxMzSWMouzQsXAIXRExJKTbMLwAJVFLSuADNIM0YkUrk1NM5xBy8qALisorE1GraiPq11A32phbNqNxgYjGBTLUAMy2eyLJwuY7db6-LaITy7faHaKxV4pNJQrK5VD5IolcoXd4zCFfdawP7NKCtdpAiag8EzMLQhaOZbBJiWcjsRBRBHyCBMKmIAAm4Sx5xxVygHIJ90IYluTzJrwpFjC9UYDUGw3Q2jY-UNI00XVFZqGGBN0oNtvQoxEwLlSUQOAA8gARL3QsCoABudvdyTuRIeOEQqGyqTAkuMKXQIFQVGhOGxHpJzxY1FsapohBwtE4tnT0dj8cTzEQAH5ENYmBEy1XUAmk8XS+XPTG4+2axR643EM21eIGwzU+PR4hgGVjKgJrGEnB0GZ5Ar+bjruQFRKFbrPb7-ToREA][Playground]])
 
 * Slide 1
