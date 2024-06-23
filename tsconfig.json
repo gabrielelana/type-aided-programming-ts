@@ -5,7 +5,7 @@
     "noImplicitAny": true,
     "module": "NodeNext",
     "target": "es2023",
-    "allowJs": true
+    "allowJs": false
   },
   "include": ["snippets/*.ts", "solutions/*.ts"]
 }
