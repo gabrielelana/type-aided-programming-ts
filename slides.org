@@ -1014,6 +1014,149 @@ export { T01, T02, T03, T04, TODO };
 - [[file:snippets/assign.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrcysASQFsADnn7gkoTIlCIAnoPx4AbuGjS2oLKNDZwLTItgMArgCdQDAGagABgG8AdI8wAaUI-vYAvtYlSTR+GREWFFuWXlQAEFISFgAc3gAHkjXACEAPlAAXlAAFQB5ABF8gG5uJgZ4SClMGPj4bNBktPSACgZsACsARgAuKNcOzoAmftSASn7o2ITm0AzszNbbclA3RyHu51X1+yHh7c9xsp5QfOUTE1hUcBtr63Jw24AlAAZuxun6xNtQeExRP1qld4HESqBrv14EZ+DozJ5XL9IRpECC4qBPOkyk88u9GgBRIjyJiIRL4gCORkw0ESby2oF+-0BKLRGNAADIGRDUEDUQh0ZisdwqOdwJdrrdrJg4uAfJh4KgbCYGHgHji3sNPnVZjtGQDwLy0eDpQaWfzwcq8Ib+Rjtmtfib+gAWYYWlWmgBEmFQ-AQHox5CFONyr01OUJxNJFKpNI1iL++utoLZnIdMudrtAls93t98H9gpOVAAcgxzBdoJhBI85C9XgBmLUzJJ65nA83cqEwuG2rmOv7dsUYoO13GN8NE9hRynU2kN+NM03t0Hg5HQ2FDzwcvvpgcb+HpIWnACqsWTOIQFjFYiYtwsyv4oEU1KMUHIFSqUjeTsatWbywTZkPVSDoPVcZEfwRLlkQ9esC2OGsIhDH8J0jMkZxpJ5LFAb8F0TM1ky3VNOwIgVDxOYMinyRpCAubFRwjKdElyCASDEVBIGkfxwEyHJcnoiJo1nAANVwAE1eJ2VpmLacZFjyVjEHYzjhNAAB+UAPn6YY5OIJSFU4mTWjkrJMhYvTlNAMT1M00BtJ2NYNNRV8HLs0ALGpSBwBOYhBAYEwpF+EN6RDA4x1cZCIqojEyiAA][Playground]])
 - [[file:solutions/assign.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/PTAEEkFsAcBsFNLwHYBdQEN2oJ7XgLQIBu8soqAFvKAM4ZKgBG8lGxAlgPYCuATqC4AzUAAMA3gDppGADShpkpgF9RmdHx7ICqDkgBQ+3PlABBWrQ4BzZAB5T8gEIA+UAF5Q40AG0A0qA5kUABreBxhUAB5SA5Ue3lQ8JEXAF0ALjM-FNBlUAAyUEcAbkMAYy5kWnQMC2sgj3jC5wAKLiYAKwBGDIdBDoAmDMcASh7am0aXd1dm8X1QBWk2rtl5xcll-tXlYZL9ECjSPj4OABMaUTPRIzwaACUABk73M3G7L2QGeAyqk+QrIoBU4ZZA8SAsATKeReM4-VB-Kw5ZwlYw0AAqTxeAFEAB74UpxLEARx4GFgtkenWhoE+SDhCJy+U8QPpgURymcyMMB0iRxO5zEGCs8DUGGQpzEfC4CGuqNAj36L3Mlgmaw+X1Z-0BQu+dHhbMBUoQmvZqwWXh1GQALP1DdLdQAiDCnGLIB05fRcuUYxUeXH4wkkskUh5bZm03W-NmMgoW4XW22gI2O52u90crn7MAAOS4giOsAw0BuJkeAGYlW9bOq6XqEYDYTSwRCctTLU3wfBIV7bqAMRW-Xj4ATbMTSeTy9SIyaG8COy3crHMPH512kZmDgBVSz-Ci9wJCLsoUo0IRSyCgYhknjwWj6cqVdCPK0vGoq5CzGka0AOxxtB3yI2L5QsyjYOmW6a7CW6IPC+g4BqOQbkqiETPlO35Rrui6gXOmHspyezepEAAikQvMg8BHCivb+sOcRoqA8A4qgKCnLQFCaPArgeGi1EmGOwYABryAAmtxazNLYaItMM0x9oxzGsexgmgAA-KAzwZP0slMSx4rsVJMlyQxulKaAIlqRpoBaWsCzqfCN62dZoBCGStDwHsTHQFwfDoF4GJUn2obyP2IWwSFJFkcoJRAA][Playground]])
 
+* Arrays & Tuples
+
+** Arrays
+
+List of an unknown (at type-level) lenght of value of the same type. All of
+their values must share the same type, but since this type can be a union, they
+can also represent arrays of mixed values.
+
+#+BEGIN_SRC typescript :tangle snippets/arrays.ts
+type Tags = string[];
+
+type User = { firstName: string; lastName: string };
+type Users = Array<User>; // same as `User[]`
+
+type Bits = (0 | 1)[];
+
+type Content = Tags[number]; // string
+
+export { Tags, Users, Bits, Content };
+#+END_SRC
+
+- [[file:snippets/arrays.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAKghgcwM5QLxScATgSwHYIDaAugNwBQ5okUAqkhFmlAN5QBmOWmAcnALYQAXBmz4EpKABs4vAcNG4CUAL4Vq0eoxToAglixwQAHi1YAfJID0VjPKiyoAAzMknlDVABCOYDqgAFAAMUAA+UACMAJQkFFTg0ADCAPZ4wBBpzPDIhHgArvwARoxkUDaK4pQQAB5gyVjArLCISAA0dAzc7T5+7SlpGY1q5EA][Playground]])
+
+** Tuples
+
+Tuple types are arrays with a fixed and known length at type-level, each index
+can contain a value of a different type. For example, the tuple ~[string,
+number]~ defines the set of arrays containing exactly two values, where the
+first value is a string and the second value is a number.
+
+#+BEGIN_SRC typescript :tangle snippets/tuples.ts
+type SomeTuple = ["Bob", 28];
+
+type Name = SomeTuple[0]; // "Bob"
+type Age = SomeTuple[1]; // 28
+type NameOrAge = SomeTuple[0 | 1]; // => "Bob" | 28
+type Values = SomeTuple[number]; // "Bob" | 28 | true
+
+// Can be concatenated
+type Tuple1 = [4, 5];
+type Tuple2 = [1, 2, 3, ...Tuple1]; // [1, 2, 3, 4, 5]
+type Tuple3 = [...Tuple1, ...Tuple2]; // [4, 5, 1, 2, 3, 4, 5]
+
+export { SomeTuple, Name, Age, NameOrAge, Values, Tuple1, Tuple2, Tuple3 };
+#+END_SRC
+
+- [[file:snippets/tuples.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAyg9gWwgFQK5gDbQLxQNoBEAQnAEYEA0UATABwC6A3AFDOiRQByAhklLvCRpMEPAAYmUAPRSoxMgTbhoAQQDmOWIhToseAIySZNWko48kAeQBO6zYJ0jxUAD5RDjabOwA+OSXJXEzNoADVuDFQIAGd+LSFdUQA7VARSCGsjWXlAtzog4Gso1mMAYW4kqHSoAGM4JJruYAgkpogAExCoYSx9OLwAFioAViYunohqfv0qaioAZioAOhWJjy98GZoFqiGoUfHE+f6VpbXl1cTqLPw94aotuahFqDv6VggADzA4a2AoADe8UcWCoFggVDsYN4EBsUKg4UiMSo526VxRRygAF8WEA][Playground]])
+
+** Destructuring with Infer
+
+#+BEGIN_SRC typescript :tangle snippets/destructureArraysAndTuples.ts
+// prettier-ignore
+type SwapTuple<T extends [any, any]> =
+  T extends [infer X, infer Y]
+  ? [Y, X]
+  : never;
+
+type T01 = SwapTuple<[string, number]>; // [number, string]
+
+type DropFirst<T extends any[]> = T extends [infer _, ...infer X] ? X : never;
+
+type T02 = DropFirst<[string, number]>; // [number]
+type T03 = DropFirst<[string, number, boolean]>; // [number, boolean]
+
+type Partial<T extends any[]> =
+  T extends Array<infer X> ? Array<X | undefined> : never;
+
+type T04 = Partial<string[]>; // (string | undefined)[]
+
+export { T01, T02, T03, T04 };
+#+END_SRC
+
+- [[file:snippets/destructureArraysAndTuples.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEAcCcFMBdYJbUgWgQcwHYHsYChYBPcaUAZQHcBDcAFQFdwAbaAHltGgA9ZpMATAM6gA2lUyEANKHGEAugD5QAXjyhQHbrwHCRCTADNkoABrT9RyKACactaAD8o69JN31ALlCZoAN2QA3HgExKS0AAwAjCrk1HSMLKwigrCQ+ujSmPQAtgBGyIoBoCCiWXnI0ilpmOh2ISSgACKQ2OAAYgiQKeycPHxCMhIiijGafTqiFsYA+tIAdAtTVm6OpqBePv6QQfVh4QBMMc2tHV2wSVXpmTn5kIXFYCJlt3ZEDREAzEct7Z3dyakrt4bhVQLlsNgWOJ7iUniDINJwZDoNDgm9SAAFKiQRBUJg9LT9YSyYZKVTqMbaAYAQUgkCohFYS1MSictPpjJMoAAPqB6AJoAZ9NB+EoNn5AmjQhpwgAWGJYnEIPGsS41UlFEoACjV6B5fIFQp8-AAlMNgtxwLhYKAAN4yyLSCL7J3hD6u+UAXyCQA][Playground]])
+
+** Exercises
+
+#+BEGIN_SRC typescript :tangle snippets/tupleToArray.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+type TupleToArray<T extends any[]> = TODO;
+
+type R01 = TupleToArray<[1, 2, 3]>;
+type T01 = Expect<Equal<R01, (1 | 2 | 3)[]>>;
+
+type R02 = TupleToArray<[number, string]>;
+type T02 = Expect<Equal<R02, (number | string)[]>>;
+
+type R03 = TupleToArray<[]>;
+type T03 = Expect<Equal<R03, never[]>>;
+
+type R04 = TupleToArray<[1] | [2] | [3]>;
+type T04 = Expect<Equal<R04, (1 | 2 | 3)[]>>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { T01, T02, T03, T04, TODO };
+#+END_SRC
+
+- [[file:snippets/tupleToArray.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8xATwAdwoACoBXfnmEMAggCdZmXgB5hEEuHipIoTPF4BtALoA+UAF4RAeQAilgNzc+g0ACUADAEZzI8ZJnzFJX0PABpQACYwgGYTBychYU9vAFEiQSZEJWSAR1FMaCV3UNAACi8AHwjQSqiASiNjYwceASF3cO8xCXApOQVlfXhRAFtscFkwyERZBABzWJbnRI6LVPTMnLyC9rCSodHx6tApmfhZ+pMmx1bXNyjO3x7-fqCF+JE7lLT2Ddz8wruYUIADdxg0ros2m4ACwPbq9AIDDyGI76cIoyr6GJXd6JWGrb4ZLJ-bYw3YVKo1C6NZq4myWbwg8ZxG5rH4qNSIDRaUDTUTgUwWYQs5ybf4ADTCAE1BeRQKUVMYSrVzKZVMQuZptOLQAB+UBeABcERVGu52kVytVIk55tAUr1BtAxvCcvljr54Dd8uNADN8pBwM1iPwGLJEKAAN4fYrLMKJKLxslWWygAC+DiAA][Playground]])
+- [[file:solutions/tupleToArray.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAKgrmANhGB7AggJ0wQxAHhiggA9gIA7AEwGcocKQBtAXQD4oBeWJiuAWwBGETC1YBuAFCTQkKACUADAEYusBMjRZcBJsoA0UAEyGAzOymzoMFWoCiJSAGNg+OwEc4ORPiUGoABSqAD7GUKGmAJSsbGxSMuDQSkZq8EgoGNh4+LwCwpiGNMCYAJYUAOYWCXI2KdwOzq4eXj7JhgF8QiLhUEWlFdHscdJWCoqmqRoZ2tkxlomw4-aOEC5unt6+44YUEABuIjHD1UmKACyT6VpZusosPUxG96FM5sOjNhf1K2vNm0pndohMIRQaxeIfADyABFIWpdgdMPM5A1Vq4iKRyNQ6MU4BAONwYMjoH8fAANQwATQJkiggUIbACkS4HAxZEotCgZKgAH4oKoAFzGZmYjl0BlMlmwYjs7FQSm8-lQIVGWl0xW4iBqulCgBm3hoEHipDAqEwwCgAG9Fv5aoYbKZ7ed7TC4QBfKRAA][Playground]])
+
+#+BEGIN_SRC typescript :tangle snippets/last.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+type Last<Tuple extends any[]> = TODO;
+
+type R01 = Last<[1, 2, 3]>;
+type T01 = Expect<Equal<R01, 3>>;
+
+type R02 = Last<[1]>;
+type T02 = Expect<Equal<R02, 1>>;
+
+type R03 = Last<[]>;
+type T03 = Expect<Equal<R03, never>>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { T01, T02, T03, TODO };
+#+END_SRC
+
+- [[file:snippets/last.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8xATwAdwoADKZIiADwAVAK788EEuHipIoTPF4BtALoA+UAF5QUgPIARUwG5ufQaABKABgCMRkWMlaXAGlAAmPwBmfRs7ISlXdwBRIkEmSWiARxlMaAlnX1AgvT0bHgEhZ393UXEJb1CC+0iS41j4xJS0jKdA0Bdc-PDHJyDSzwqqnsj++rj2JtT05yC-QgA3cAAnLttCkwtTd0WVsI2GyelFRGVVUERlmXADYyl9+2TpiQANPwBNW-JQUAAKaT0vwAlEYDFITmc1C9QAB+DqgABcARBxFOKjUAOBoJMEPRoHesPhSP83x+hMu11JPyRADM0pBwPliPwGMtEKAAN4mVx+Wq8vq8ragAC+NiAA][Playground]])
+- [[file:solutions/last.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/PTAEAcCcFMBdYJbUgWgQcwHYHsYChYBPcaUAGQEMBnWAHgBUBXcAG1OgA9ZpMATK0BUyEA2gF0AfKAC8eUKCat2XHv1AiAdFoSYAZslAB9ADSgd+yKAAaYuaAD81uwC5QmaADdkAbjwFipABKAAwAjDLk1HQioaYATKYAzJK+RCQKYREAohwkAMZ0WQCOjBQstCGxoIkSEr7+6SFxEZQ0tDEpDaT0wc3SoDn5hSVlFb2mobX1aUHBiS1R7Z0zGfP9g9AFtMWl5SGJpu5ekFN+K-QA8gAiFxFHPl0DuZt09KCc3HwCsJCM0FL9eipAIDEblKymACaALsAAoGBJYQBKGRSN4fVQCKwOUDhVxxFEYr6gBHI1EKd4qYmQnF40BxOzyRw-P6M0CuXRlKjQeqccC4WCgADeGSqPQSq1MlxuoAAvr4gA][Playground]])
+
+* Recursive Types
+
+TODO
+
+* Mapped Types
+
+TODO
+
 * Slide 1
 This is an example of a slide
 
