@@ -256,7 +256,7 @@ type Y = unknown | number; // unknown
 A value of every type can be assigned to ~unknown~, an ~unknown~ value cannot be
 assigned to anything.
 
-#+BEGIN_SRC typescript
+#+BEGIN_SRC typescript :tangle snippets/unknown.ts
 declare const x: unknown;
 
 // @ts-expect-error
@@ -264,6 +264,8 @@ const y: string = x;
 
 const z: unknown = "anything";
 #+END_SRC
+
+- [[file:snippets/unknown.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/CYUwxgNghgTiAEYD2A7AzgF3gDwFzwFcUBrFJAdxQG4AoGgenvgAEM0BaEbAB3A05gwkMGsnRYAnvkwwAligDm8ALw5ao1JngAvfEVIUUK+ACIoKCRgAW8hSdpA][Playground]])
 
 So everything can become ~unknown~ (upcasting) but you cannot do anything with a
 value of type ~unknown~.
