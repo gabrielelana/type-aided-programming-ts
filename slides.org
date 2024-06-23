@@ -564,6 +564,291 @@ console.log(company);
 
 - [[file:snippets/brandedPrimitives.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBA+nARgJwIZgCYwLwwMoCeAtoiADYAUARAiuhlQJQDcAUK1AQA4CmMAQmkwAefgD4cMAN4xkPVBnBkCMANq0hGALoAuATAC+bDtz6D6PDMIAqAGgETc1mADIBm0WOOhIsIqgBrHnNMHFYYGGEfaAcKJD1+RhwxcMjrMQooPWtGBM1LG3txZNSI2FQIGABXMACwEAB3MBgK9wsrOwdjTl4YAFUIHmQASQARSRCMAuhkAEswAHN7KgGhsaovVmi-QJ5VkfHcfyDJ6n31lhNe-ckZWYw9c-Gjdm3qweRHj9uYe71jvYfMbUACMACYAMxMQzdUwwADCICIXHQBDGE3yVhm8yWMCoiORqPWmzeAIJKLAaMOMABp3xSIpVKYbB6fHJqJ+fwRDKJz284BioEJlL07MpnIeNN2YqpoMh0JerAAZjVgFBZuAYAArEDzGVxKofL5rUb2OBCxminmUsa5GAAN11WCkqQA9K7fsg5GQePb0FBWAZ2Dq9daCBRDUMAHT3ewW1ExjCXVjumAAASgEAAtDwAB68NU5r0gZAwACCyAWVSIPDAsBASpgrJgAHIZWMW79KvVyhAILMFmBUIgfU2QDAUWga1AhjAG024S2ni3WCGwPr45TE-ZI8hE8nouQeFGyCAFhGPpdUy7UxEqPcqHoqOCoSmPUGtgKjyezxRNwQrw9G8PTvB8nxfKg30MVggA][Playground]])
 
+* Conditional Types
+
+In /Type-level TypeScript/, code branching is known as /Conditional Types/. The
+syntax is very similar to the /Ternary Operator/ we use in JavaScript
+
+#+BEGIN_SRC typescript
+X extends true ? true : false;
+#+END_SRC
+
+Before the question mark stands a condition. It's always of the form ~A extends
+B~, which is how you ask "Is A assignable to B?" to the type checker.
+
+Conditional types only start to make sense when branching on type parameters, so
+let's implement our first very simple /Type Constructor/, meaning a type with
+type parameters.
+
+NOTE: you can find places where ~IsTrue~ is called a Type-Level Function, I
+don't like it, I think it's misleading.
+
+#+BEGIN_SRC typescript :tangle snippets/isTrue.ts
+type IsTrue<X> = X extends true ? true : false;
+
+type X = IsTrue<true>; // true
+type Y = IsTrue<false>; // false
+type Z = IsTrue<number>; // false
+type W = IsTrue<never>; // never, why?
+
+export { X, Y, Z, W };
+#+END_SRC
+
+- [[file:snippets/isTrue.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAkgzgFQE4FcIB4AaA+KBeKTKCAD2AgDsATOKYVaAfjoagC4oAzAQwBs4IAbgBQw0JEL5YiBunppsgqAHplLNGPDQAmlPjI06HvwiKVa4wM0SAWnpmGKKALYAjCEjOqufK+OgA6vYGGBQQAG4eXmphkUgANFAA7gAWIIyipGAA9kjAUADehInaiTaJQQC+IkA][Playground]])
+
+We check if ~X~ is assignable to the literal ~true~, return ~true~ if it is, and
+~false~ if it isn't. With a literal type on the right-hand side, extends
+essentially behaves like a type-level ~===~ (Exercise: why?).
+
+Let's try to implement an ~If~ at type-level
+
+#+BEGIN_SRC typescript :tangle snippets/if.ts
+type If<C, X, Y> = C extends true ? X : Y;
+
+type X = If<true, number, string>; // number
+type Y = If<false, number, string>; // string
+type Z = If<boolean, number, string>; // string | number
+
+// Exercise: change the `If` defintion so that the following line will give a
+// type error because we want to accept only booleans as first type parameter.
+type W = If<[], number, string>; // string
+
+export { X, Y, Z, W };
+#+END_SRC
+
+- [[file:snippets/if.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAkgZgHgMIBooA00E0B8UC8USUEAHsBAHYAmAzlMAE4Cu0A-BlAFxRYDcAKAGhInQvARNWaSswC2AIwiM0tJgEtKAcxx8oAen1RZi5cPDQsBWIjgBDADa0IM+UpVQ1jTTr2HPGtrmogBa1hIKAPaRDhB2lK6mHl4+ugZGKdpQAD7GbmYC-gCipMoAxurOPGUAFvFa0MA10AAG8C1Q1BBwmsDqkZSekQx1wCPQcDEOkQDuPlAOmtBzDg5QWuoAbtB2hUYi0MqMkYxQSmV2zM5QM8vxY8DDdmVlEGBjAw4gZ9Gx8fR2eg9RhqBgWKBgOyMOxyCAURgAOmC0AA6uFEABtAC6iXcqkCvnSAW8QQEZDAJzGAG8MNg0CE0GiAL6CIA][Playground]])
+
+** Nesting
+
+Conditional types can arbitrary nested.
+
+Convert ~Direction~ to a number.
+
+#+BEGIN_SRC typescript :tangle snippets/indexOfDirection.ts
+type Direction = "left" | "right" | "up" | "down";
+
+// prettier-ignore
+type IndexOf<T extends Direction> =
+  T extends "left"
+  ? 0
+  : T extends "right"
+    ? 1
+    : T extends "up"
+      ? 2
+      : T extends "down"
+        ? 3
+        : never;
+
+type _ = [
+  Expect<Equal<IndexOf<"left">, 0>>,
+  Expect<Equal<IndexOf<"right">, 1>>,
+  Expect<Equal<IndexOf<"up">, 2>>,
+  Expect<Equal<IndexOf<"down">, 3>>,
+];
+
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { _ };
+#+END_SRC
+
+- [[file:snippets/indexOfDirection.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAIglgJwgY2HA9gOygXigIgBsIAzYfKAHwITgHMALcqggVzAuvwBN0B3TPgDcAKBEB6cVDBJgaCAgC09TOiQjQkKAElM3CAA8A8iQA8AFSiHgEPQGdYiFGiwA+XCKhRL129wdEpOSeUAD8UAAMIQBc3lYGNvY09Ez4IV7hAIzpULE+CX4B7GlepWFQAEw5Xnnxif4EvAIlZaXhAMzVpbGYEABuCqIa4NAA+rhQANohAKIGkKimMwCOrACGhKa6+sZmgWT4rgA0ka7Hs-POS6sbW3qGJqb4tIzkx1CZZ0cXC8DX65ttg89sV3hUvj8risAXcdo8ePxBO92hCALpDTTQOa-Cx1QpQYAIVgQdx4cyiTFQaG3AAaJwAmqSQgAKCyuZkASlw7ny9QcNPKmVylS5viSbM53LiYoa9MFwqqZXChOJOViJA2dggQ0MYDUwCgAG8oOMAL6iIA][Playground]])
+
+** The Power of Infer
+
+The ~infer~ keyword is the real superpower of /Conditional Types/. It enables us
+to create a type variable by destructuring the type on the left-hand side of
+~extends~
+
+#+BEGIN_SRC typescript :tangle snippets/inferRole.ts
+// prettier-ignore
+type GetRole<T extends { role: unknown }> =
+  T extends { role: infer X }
+  ? X
+  : never;
+
+type T01 = GetRole<{ name: string; role: string }>; // string
+type T02 = GetRole<{ name: string; role: "admin" }>; // "admin"
+type T03 = GetRole<{ role: "staff" | "service" }>; // "staff" | "service"
+
+type T04 = GetRole<{
+  role: { name: "admin"; permissions: ["read" | "write"] };
+}>; // {name: "admin", permissions: ["read" | "write"]
+
+// @ts-expect-error wrong type, missing `"role"` field
+type T05 = GetRole<{ name: string }>;
+
+export { T01, T02, T03, T04, T05 };
+#+END_SRC
+
+- [[file:snippets/inferRole.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEAcCcFMBdYJbUgWgQcwHYHsYChYBPcaUAcTgCVsAbaAHgBVRoAPWaTAEwGdQBvUJFrQAXKACumANY4A7plABfAHygAvHlChmbDtz6DhdcQkwAzZKAAayraAD8N++MzQAbsgDceAsVKMAAwAjBrkVCL0gpgAhgC2YqA8sJBm6F5CIuLJqZjoyioZIEkpaX4kOoEATGEUsNR0UaCxCdmleRnGiQBEMVxxZt0FRWC9-YPlAYEAzLURjUZZoN3JMebmQwA+yzzI7ggAxtBDqiM7sGsboNsre4fHvkQVQQAsc-WR-PZd4tHxPX0BphuhkSJABjweAhsJgeOIANrdGB9LbLOSpDjdAC6yh8p1AxX4LQB42BABoIMgIVCYXDQIjkVxUd10QhMVjfMUAAKwHgoNgkA6wfmQYSQUDomH5J7QCnUtKgAAGSJE3UVoHMSBoXEmlQArO8Ggw-q0Srl8qdfALcLABJVghSglVHTMXS8XQalD4gA][Playground]])
+
+We can destructure every structure known ad Type-Level, see later for more
+examples on Arrays/Tuples and Strings.
+
+#+BEGIN_SRC typescript :tangle snippets/returnType.ts
+type ReturnType<F> = F extends (...params: any[]) => infer R ? R : never;
+
+type Fn = (name: string, id: number) => boolean;
+
+type T01 = ReturnType<Fn>; // => boolean
+
+export { T01 };
+#+END_SRC
+
+- [[file:snippets/returnType.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAShwFcBOA7AKuCAeAYgPigF4ocoIAPYCFAEwGcoAKAOlbAEMl2BbOgLijsUIANoBdAJRECASxQAzCElhQA-CoEoIANyUBuAFAHQkEiiJMUPCALrAkcgOYAaKDJqaE3AEZKphAm8AeyCAGwghQ2NMKDQABgBGCzhEVAxIXBQ8PSgAelzpKGCwiJQjCjAgpGAoAG9YxKgAX0MgA][Playground]])
+
+Even custom generics.
+
+#+BEGIN_SRC typescript :tangle snippets/destructureGenerics.ts
+type Container<T> = { content: T };
+
+type Contained<T extends Container<any>> =
+  T extends Container<infer X> ? X : never;
+
+type T01 = Contained<Container<string>>; // string
+type T02 = Contained<Container<[boolean, number]>>; // [boolean, number]
+
+export { T01, T02 };
+#+END_SRC
+
+- [[file:snippets/destructureGenerics.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAwg9gO2AQwJYIgJwDwBUB8UAvFAN5QDGiwESAXFLlAL4DcAUO6JLNWhgBM8UCAA8aCAQGdeSflmzIEIfISLsojEeNrTZKdAvQAzLFAAahAPwWoDDADcsHLuGi4ADAEZi++UPg5QxwpYEx0AHNVVigAelioUPCECNceTwAmX0CDQWwc+RwAbQAjODgAGwglABooBABXAFsSrABdaLiE0vKq2vrm1sw2zjEwOExgMkZvOsyWDiA][Playground]])
+
+There is no standard syntax for declaring block-scoped variables at the type
+level. This is a shame because we know how much more readable the code can be by
+declaring intermediary variables with sensible names. It can also help
+performance, we can store the result of an expensive computation to reuse it
+multiple times later without having to recompute it every time.
+
+But we can use ~infer~ for that.
+
+#+BEGIN_SRC typescript
+// Good ✅
+type TwoTimes<X> = ExpensiveComputation<X> extends infer R ? [R, R];
+
+// Bad 🚨
+type TwoTimes<X> = [ExpensiveComputation<X>, ExpensiveComputation<X>];
+#+END_SRC
+
+** Advanced Gotcha: Witnessing
+
+A (probably) surprising result
+
+#+BEGIN_SRC typescript :tangle snippets/withoutWitness.ts
+type Some<T> = { _tag: "Some"; value: T };
+type None = { _tag: "None" };
+type Maybe<T> = Some<T> | None;
+
+type UnwrapMaybe<X extends Maybe<any>> = X extends Maybe<infer T> ? T : never;
+
+type T01 = UnwrapMaybe<Some<string>>; // string
+type T02 = UnwrapMaybe<None>; // unknown ??? 🤨
+type T03 = UnwrapMaybe<Maybe<string>>; // unknown ??? 🤨
+
+export { T01, T02, T03 };
+#+END_SRC
+
+- [[file:snippets/withoutWitness.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAyg9gWwgHgCoD4oF4oG8oD6wAhgOYBcUARPElQNxQBuxANgK4SWpQC+9AKFCQoAOTgA7aDnxEylKuKlU+g4dACyxEACMUGbLET7MAHzGSIgoeGgBVCQHcATsTBbdKABpQIAD2AICQATAGcoDz1kYgkQdEwcH39AkPDIlABLCQAzCGcoAwB+AqhKKSY863UCgAYARkMHFzd05FoUUOBnLNJ4xgB6fqhO7olSGxFUGoAmRqdXd20opQh0AaH2CQBrCThHCShCo6hAPg3ACl2J6CmAZjnmxc9kVpGevqhBqE2dvYOj4vOBAJ-GA4M5gHhanUADS1aYwm6qARAA][Playground]])
+
+This is because the Type Matching (aka Type Destructuring) worked (otherwise we
+would have got back ~never~) but the inference (keywordd ~infer~) failed because
+there's no type witness in the type structure, meaning there's no place holding
+the type information.
+
+#+BEGIN_SRC typescript :tangle snippets/withWitness.ts
+type Some<T> = { _tag: "Some"; value: T };
+type None<T> = { _tag: "None"; _witness: T };
+
+// NOTE: you can always populate this value with `undefined as T` placeholder
+type Maybe<T> = Some<T> | None<T>;
+
+type UnwrapMaybe<X extends Maybe<any>> = X extends Maybe<infer T> ? T : never;
+
+type T01 = UnwrapMaybe<Some<string>>; // string
+type T02 = UnwrapMaybe<None<string>>; // string
+type T03 = UnwrapMaybe<Maybe<string>>; // string
+
+const none = <T>(): None<T> => ({ _tag: "None", _witness: undefined as T });
+
+const noneString = none<string>();
+
+type T04 = UnwrapMaybe<typeof noneString>; // string
+
+export { T01, T02, T03, T04 };
+#+END_SRC
+
+- [[file:snippets/withWitness.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAyg9gWwgHgCoD4oF4oG8oD6wAhgOYBcUARPElQNxQBuxANgK4SWpQC+9AKFCQoAOTgA7FBmx5CJCtXFSGhAO4BLYFIDOO7n0ECA9MbEB5VAFFKIOOygBjYhKhs1xEDqhg4YdqzEwNDAABYa3iwc0JphUAAG7BIAJhAAZhpSyW7eqPE+gY4QoXCsqQBOQuDQALKeAEbSmDi0TVAAPmKSTUbC0ACqEmrlxGB1II3IABpQEAAewSne45MuIOjNUDPzi8nLDSiZaRDlUDIA-GdQlFJMJ73VZwAMAIyyg8OjKyityDrA5UypA2jFMUH+gIkpCqIlQTwATO8hiMxgdkMoUBCgSCoGCsVCYdA4QBmJGfVETFDfP4A7HoUFmfHQgSOST-KASbqyNDoAAUAEpKBiedhMLz8EQyJQqBiqAAadRaXT6KBJVIZLI5K68flGVkSdmcqQwWlQ2RGzGm4ECh6wp4AFjJKOpfTgaQ53RNkOBDPBVoEAnmvnKwDkcJeCrh8MjT2JMcd-AEQA][Playground]])
+
+** Exercises
+
+#+BEGIN_SRC typescript :tangle snippets/inferName.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+type GetName<X> = TODO;
+
+type r01 = GetName<{ name: "Gabriele" }>;
+type T01 = Expect<Equal<r01, "Gabriele">>;
+
+type r02 = GetName<{ name: string; age: number }>;
+type T02 = Expect<Equal<r02, string>>;
+
+type r03 = GetName<{ age: number }>;
+type T03 = Expect<Equal<r03, undefined>>;
+
+type r04 = GetName<{
+  name: { firstName: string; lastName: string };
+  age: number;
+}>;
+type T04 = Expect<Equal<r04, { firstName: string; lastName: string }>>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { T01, T02, T03, T04, TODO };
+#+END_SRC
+
+- [[file:snippets/inferName.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8xATwAdwoAOLhEAOUwBbcAB4AGgD5QAXlAAVAPIARTQG5ufQaABOABgCMqkWMkzZAb1Dxp4AFygARMJwnY4PE9QAF9FAyMhdUtrAFEiQSZEWRiARwBXTGhZcwsAGi8fbD8A8E9FMMMBIXMAJmtRCVdHZ1cPSEQ-eABzPVBMLvdnNKlscBMQioiNMzq1OISk1Iys2vz2zq7ygx4q0zMAZnrbJqd+wfhh0fHQ8N2ow7n49kX0zOyD-LT4VHAAMwRwKgtpVjOYACxHRr2BzkUAtGQeJz-EztOyDdYIHqgaCYVGtUAY7ohAxws4eC4jMYGG47YxRCGPBbJV4rMxg-JI2AoqHojqY3o4vEIgl8omhCq0yI6TTWQgANypktA82esnUEBI4G+kFAHTS4GUanUt2MSze8nyAE1DbDQAAKNWKO0ASlUynVxEQWtQOvkoAA-KArB4aq7Pd6dY6XW6NBqvdrQJaA0HQCHbXDA3rwOnU6BfplIOBtsR+AwTIhQE4onlpjV8vd62z69LieQgA][Playground]])
+- [[file:solutions/inferName.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBA4hwDkCGBbCAeAGgPigXikyggA9gIA7AEwGcoBvKC1CALigEsKAzCAJygIoAXygB+QVHYBXahG5cIVANwAoVaEhQ+ABgCM+WPGRp0jZmnYAiGEgBGfDhAA2EKyOxrN0ACr7DAKIkkADGwOgBAI7SSM7ounoANFA29o4ubtie6t7aOgBMhnCILGZMLOw0wI4UAObKUEi1bEzSKHb8Hl7gvgWBwRBhEdGx8QXJVTW1WWoaPXkAzEXGpYxNLRRtHQLC2bl+SwRBoeFRMXG6C8myVPKKVDM587oALMslpvSqUOWWDFAKPhVEwtSZcepQZxIYEVKBguoiNQ-dbsTbtfhqXbdLR+N5HAZDM6jV7JRiAmF-eEQqEU0HVcEebJzHEAeQAIizDBQIAA3DHM6DHQbhHzEMiUWhQarSCC4Ag+bGCkZxTDJACacu+UAAFOgfNhtQBKfC4UWkcjUOhECQGdj5Y3miV0PUG414U1ii2StXiKC2qD5LU-CTSiBBqQA2I0CCzUhgAD2fGA-z8SSgfnyyQOWZ0Lyz7M5wjUQA][Playground]])
+
+#+BEGIN_SRC typescript :tangle snippets/and.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+type AND<A, B> = TODO;
+
+type r01 = AND<true, true>;
+type T01 = Expect<Equal<r01, true>>;
+
+type r02 = AND<false, false>;
+type T02 = Expect<Equal<r02, false>>;
+
+type r03 = AND<true, false>;
+type T03 = Expect<Equal<r03, false>>;
+
+type r04 = AND<false, true>;
+type T04 = Expect<Equal<r04, false>>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { T01, T02, T03, T04, TODO };
+#+END_SRC
+
+- [[file:snippets/and.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8xATwAdwoAIIA5ACIAeYQBpQAIQB8oALygAKgHlxmgNzc+g0ACcADAEZVIiZMTGAruDl3Hi-YaHqLVgKJFBTIiSPgCO9pjQkmbmzg7gim4GAkJmAExWYlIAZhGQTqA50HmJHhqm6Wp+AUGh4ZFpcoXFiTzJJqYAzBk2LvlN8e5tXl2V-uw1YRFRnY258S2lZgAs3dlzsa6DRl4ro9XBk-WmS7NF8-qt29qaVoQAbuDGW0JV45LqECTg8KiQoL3KNTqZ6gWpTAAacgAmoDyKBQAAKd6KBEASlUyg+xEQ31+oHBoAA-KBLAAuUCpdHY3F-ZFojEaT44n5-KFEkmgcmpOHw9m9Hnw8n9C7EfgMYyIUAAbzKMTKqTkw0Vx0V11AAF99EA][Playground]])
+- [[file:solutions/and.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAggcgEQDwwDRQEID4oF4oDaamAulBAB7AQB2AJgM6HABOArhOqx2QPxTdoALigAzAIYAbBhADcAKHmhIUFgAYAjHliIkgruwhYFy6ABVN2gKIVIAY2BIrARzZSk6jQY5Zji06pqAEza8MgS0pxiUjJ+ARYh+Db2ji5ukh7B6BGxfkrg0OoAzKG6+tGRcQVQFiVJthAOTq7uxdkxRnkB6gAspeEd3kYm1RZ99SnN6Zk97ZVdowDyCIvaNBAAbhAsIyrJjY5m5FS0jAKGOPhmu9Bp7gAa6ACal-JQUAAUSGZYHwCUeBwR0o1HoTHuUH4WhEQQBINOTG+vwBuCBx1BZyekKg0KgQTe72xggJ7xEOTkikoYAA9ixgFAAN41TToBKstRFdmzGrLVYAXwUQA][Playground]])
+
 * Slide 1
 This is an example of a slide
 
