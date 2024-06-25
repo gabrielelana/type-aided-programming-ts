@@ -1439,20 +1439,282 @@ TODO: smartGet exercise
 
 Mapped Types is about transforming objects.
 
-TODO
+#+BEGIN_SRC typescript :tangle snippets/toInternalPayload.ts
+// We have seen this before
+// prettier-ignore
+type SnakeToCamel<Str> =
+  Str extends `${infer First}_${infer Rest}`
+  ? `${First}${SnakeToCamel<Capitalize<Rest>>}`
+  : Str;
 
-* Slide 1
-This is an example of a slide
+// We have request payload which we don't like because internally in our core
+// domain we use cammel case for the fields
+type RequestPayload = {
+  chapter_title: string;
+  author: { full_name: string };
+};
 
-#+BEGIN_SRC typescript :tangle snippets/example.ts
-export const z = "foo";
+// We don't want to rewire by hand all those request types do we?
+
+// We can do it at type-level with Mapped Types
+
+// Let's take it step by step
+
+// First rebuild the exact same object type and familiarize with the syntax
+type SamePayload = { [K in keyof RequestPayload]: RequestPayload[K] };
+
+// We want to change all the keys to cammel case, let's start with the external
+// keys
+type OnlyFirstLevelKeys = {
+  [K in keyof RequestPayload as SnakeToCamel<K>]: RequestPayload[K];
+};
+// type OnlyFirstLevelKeys = {
+//     chapterTitle: string;
+//     author: {
+//         full_name: string;
+//     };
+// }
+
+// Now add recursion and the job is done
+type ToInternalPayload<T> = {
+  [K in keyof T as SnakeToCamel<K>]: ToInternalPayload<T[K]>;
+};
+
+type InternalPayload = ToInternalPayload<RequestPayload>;
+// type InternalPayload = {
+//     chapterTitle: string;
+//     author: {
+//         fullName: string;
+//     };
+// }
+
+// NOTE: if you are not able to see the previous type, use Expand, can you tell
+// now what's it's doing?
+type Expand<T> = {} & { [P in keyof T]: Expand<T[P]> };
+
+export { SamePayload, OnlyFirstLevelKeys, InternalPayload, Expand };
 #+END_SRC
 
-- [[file:snippets/example.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBAXjAvDARAMxCFBuAUEA][Playground]])
-- [[file:solutions/example.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBAnjAvDARAMxCFBuAUEA][Playground]])
+- [[file:snippets/toInternalPayload.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEHUFNQCwQwG7QM6UgO1AFxgS2aAEaQBmA9gE6QBQIoADlVlrpBQLS4Dm6lNWAT3rQAyujgBrSABUyAYTgBbSABsAPCKwUAfKAC81UKE0VQkAB5YMAEwIADACQBvXOhJtQAMVwVkWAL4A+s6u7qYASpB+-naGoAD8oI5O3r4BzmKSMvJKqmoK9LhYcCq4AF6QapF+2toxcQBcxloA3NS0YFCwiNBUAI4ArlFYDHACKmRw1qAA7ngAxjCz0NZk6ADkI6VSRJDzcAOooK5WFOIqKgLHmGQDpvN8HaCrinCuy6CH0PuKyiqg+yO5FMOGgJFYKls1EEwlAkUGwwACmMJlN9KAnHFFnB6KdAiwsCpIE0-BRXFw2kYDjhKE0nKASAMLoFxMoSVpyaB-G1ue06F1VhsRjM4OgRlgyKAqDMfNBCFd4OhpiV-jSjv0hn5sEIos9JTNIPE+Z1vqK9ccRnBxTr2ESkP8ZThQABZHHCabSHXIY2gAAykCw6wIxR2RVAfkg9CIVwj9B9qS1VEIA1wkOwMGgFjg8xGyFyoDIhAAVntrbDRdMSEpU7g4GSKrMiktQeGBGK4OZoTrjLlkeNJtM9BjQABtADS11AUgEZBIcMgCL8fdR1gAuk14ZqsMuB+PV1y2k8uiKxdhJdj0FxoCr09Bp8Hz0o-gC4KgADSgImBgh+OvCpu3mYlhsOcTz3l2sIAPLoJcCZYP69pjpAAgEEOmJGOOk7TrO86LtuKIDqAr7GOIUiyAofxqGO2jrrhW47lMe48m0dAwtA0GwT4fgIaoSEoeimJ0EYRjYribDSEURLsmSl4sWAwlEQMNIUHSTwKQpjLMqyxLhhyslqcJvJ0P4PoAHJkDMRHWNMVDzHcyC4GsRFKoBRaFscBCCvw3ayAAkmKIElAx1hqNIuhoXEmHvNhc7SERBCZGROSUdRtF+QFZxBQRUyhXu2jMe0bGgP5pznMF6LpaVWX9jlm5Itl1j5U8RUlYFKjlRFQnCaJpwSYSOmkuScnqdSMC0hiBnqQyTIqKZuTSUNk0Hk8JlPKZkHSAAok0uBzjOAxEVQoC8JahBEme4ZoIBjCQAgjmHNqwgfl8oCbeY9AVh++yYPt2CqCoTy8JZcxWkGFpg6s5JGkVb0fUqoXhRi-igAAZMOI6IlhyE4dItGwxWuWIquui8tQFj0JQIz0iIvYNR+HECHBPEqHxyAfq1mXtXTr3vRWy1AA][Playground]])
 
-* Slide 2
-Content
+You may have noticed something a little surprising about our ~ToInternalPayload~
+implementation. We did not use a /Conditional Type/ to stop this type from
+recursing indefinitely, it turns out that /Mapped Types/ already leave primitive
+types unchanged.
 
-* Slide 3
-Content
+** Mapped Types Dissected
+
+/Mapped Types/ are often depicted as a syntax to map over each value of an
+object type. The name "Mapped Type" directly comes from there, but what they do
+really is to turn unions into objects;
+
+#+BEGIN_SRC typescript
+type LetterUnion = "a" | "b" | "c";
+
+type T = {
+  [Letter in LetterUnion]: Letter;
+};
+// type T = {
+//     a: "a";
+//     b: "b";
+//     c: "c";
+// }
+
+// We can mix and match what we learned until now
+type V = {
+  [Letter in LetterUnion]: `This is the letter: ${Letter}`;
+};
+// type V = {
+//     a: "This is the letter: a";
+//     b: "This is the letter: b";
+//     c: "This is the letter: c";
+// }
+#+END_SRC
+
+** Filtering Keys
+
+#+BEGIN_SRC typescript :tangle snippets/filteringKeys.ts
+// Some payload coming from the outside world
+type Payload = {
+  id: string;
+  userId: string;
+  userFirstName: string;
+  userLastName: string;
+  userAge: string;
+  facilityName: string;
+  facilityCity: string;
+  facilityId: string;
+};
+
+// We want only the user fields
+type UserPayload = {
+  [K in Extract<keyof Payload, `user${string}`>]: Payload[K];
+};
+// type UserPayload = {
+//     userId: string;
+//     userFirstName: string;
+//     userLastName: string;
+//     userAge: string;
+// }
+
+// Alternativelly
+type AnotherUserPayload = {
+  [K in keyof Payload as K extends `user${string}` ? K : never]: Payload[K];
+};
+
+// Remove the "user" prefix
+type StripPrefix<_S extends string, _P extends string> = TODO;
+
+// prettier-ignore
+type BetterUserPayload = {
+  [K in keyof Payload as K extends `user${string}`
+    ? Uncapitalize<StripPrefix<K, "user">>
+    : never
+  ]: Payload[K];
+};
+// type BetterUserPayload = {
+//     id: string;
+//     firstName: string;
+//     lastName: string;
+//     age: string;
+// }
+
+type TODO = never;
+
+export { UserPayload, AnotherUserPayload, BetterUserPayload };
+#+END_SRC
+
+- [[file:snippets/filteringKeys.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEGUHsFsFNQA4EMCeAbSSAmoDGMBLAOwHNQAzAJxlABcALeSAV1oGcCt4B3SStLAChaKBPAAKqDNlABeUAG9BoUJwBcoNrUrESAbmWhmbWJQCSWDVp2kDK46YBiBSloBySOFe267Rk5QAMkjunrDeNvqGDpQAgiThmj62huRIuARoBCIeXkmRfmkZWSIAwtkoEb6p6ZkVFlUpAL4GgiCgAOo8SES0oJBEaCh0jP6mFASwAmzCovAAqgGS6Jg48koqANoA0qpEoACiAB7a6bQAPADWsCiQ5KDL0lgANKAABjEAJArWuk1vAD4ALoaR6rHZAgwtNpgERiUCLUxgmTrGEqdExBr5artdFjSjOVy0XKJX4pXEYgLBUJ5MlRCn2ALxUnJelgJqCNGxNC0UxEJC0AgANymQ1m8NiREgDFMiMoyLWikMOz2oGut3uCtAIVAu1gJ1gRCwbHeXx+rP+oAA-LrQBoiLARZQQQ8pODtpDBNC0QAlWDQSAikbwABEMRDiEosHIBCO4vg4B8CHEUZjR3OAH1wKB9byjSa6a8M+Icwb89jSAC5KAACoAeQAInXWu0EFHaILTABaAgkKVR+OgABCsA7sqWbpRSq2u2Iapud1dKxkOr1ZeNpoC3zp-0MKht8yIuCQCGySCyAC9YOdEzpk6nY+dtq8wwEQwCAXu7aAHU7DC6FQhKEDHaOF4BHMdKDlLVUQZVRLArNk8QmIkSUaJC8TQEJiTCdCQLAPEkASPC0Q5Qd6ybatf1MVp9QQPg+gUBEJ2XF5QElaVGCglinleCDeW4pFJxwaEgA][Playground]])
+
+** Many More Things
+
+- Add/remove optionality to/from a field
+  - ~[K in keyof X]?~
+  - ~[K in keyof X]-?~
+- Add/remove reaonly modifier to/from a field
+  - ~readonly [K in keyof X]~
+  - ~-readonly [K in keyof X]~
+
+** Exercises
+
+#+BEGIN_SRC typescript :tangle snippets/toUppercase.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+// Implement type utility ToUppercase as in standard library
+// https://www.typescriptlang.org/docs/handbook/utility-types.html#uppercasestringtype
+// only for characters in `[a-z]`
+
+// Can you implement it by reusing the same map from ToLowercase?
+
+type ToLowercaseMap = {
+  A: "a";
+  B: "b";
+  C: "c";
+  D: "d";
+  E: "e";
+  F: "f";
+  G: "g";
+  H: "h";
+  I: "i";
+  J: "j";
+  K: "k";
+  L: "l";
+  M: "m";
+  N: "n";
+  O: "o";
+  P: "p";
+  Q: "q";
+  R: "r";
+  S: "s";
+  T: "t";
+  U: "u";
+  V: "v";
+  W: "w";
+  X: "x";
+  Y: "y";
+  Z: "z";
+};
+
+type ToUppercase<_S extends string> = TODO;
+
+type R01 = ToUppercase<"hello">;
+type T01 = Expect<Equal<R01, "HELLO">>;
+
+type R02 = ToUppercase<"Hello">;
+type T02 = Expect<Equal<R02, "HELLO">>;
+
+type R03 = ToUppercase<"">;
+type T03 = Expect<Equal<R03, "">>;
+
+type R04 = ToUppercase<"Catch42!">;
+type T04 = Expect<Equal<R04, "CATCH42!">>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { T01, T02, T03, T04, TODO, ToLowercaseMap };
+#+END_SRC
+
+- [[file:snippets/toUppercase.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrcysASQFsADnn7gkoRAE9B4UAFdEsOFNAAVBgFVBMgE5NMkWQdAJQkRJnipMO1KDjYdNyT1AtEiQZABcIAO4BAHRSMpBMOrCCiNCWAOaBDDqxwKjMkMAslqjYDAwcwApKsFLIIVCB7vzQAMRy2uB6BlCIEfCxZa4M8NCSoABmiaCsNphMiA2QJvCgAAYA2pjIAF4AujPcVADClqCSDHImQiJiiCan2L064HKQCLESbGaYoqD8mIL9Ogz8agwAMgw-A19IYAPzcMq-AFAxqGACy71AAF5QABvcigUAAQW8oAARJg8QBuDGgABCuLx2GJpM2lKYNMxABFKahGaAAKKU8DsgBilL67IA4pTYuyABKUljs3iU2DsgBSlIAVuyANKUjjsv6U6DsuGU-jsgBylPg7IA8pSGOyAAqUwTsgCKlIAjuyAEqUnTsgDKlMg7NUlMQ7I0lLk7IAapSAG7sgDqlL87IAGpSiOyAJqUyTsgBalKWNIAviTyJD1FpdCDwAAeAD6vogJDEqEm5lasQAfMi1BamRby5CPQAGACMfar9Vh9bxbGg0Bt3ZJlYnfY5RBkYzrHNdckw0DrY-HABp8eKOX8-ha8d2VxDpLIxwAmKeaGe1ut48XgRfL1cnzUUc3xRTdt0QXd90PY8QPPH8rxvO8HwrICxwAZnfatgSab870AmRgMwsCt3YSC9wPI8MPg5DhzQ0cABYsM-XC8W2RBWAYl8AEJ8NQwjVEYjdSJ3CiYLHBj4M2LFVE2cUuN4+86IEgcLT7QhYwaAjZHAsi61UFtxisSYWjkcBexRVRtM5aCj1Tc8sws0kAAp9O7ZyAEpkV7AziCM9tQFTUBQVASdcRfLy-LbSY3M87y1EM6LQCzYLQtAcLSUxELTPATL0v6Q9DHLYhBESU5UWAs9gJfc9BPQ2rGNq1Tav+QEcPhREy3IIA][Playground]])
+- [[file:solutions/toUppercase.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/PTAEEkFsAcBsFNLwHYBdSoJ7XqArqgJayFagAqA9gKrQ4BOAxgIYDOubohyorqzyACbN6g0CQBG9EZgBQIUAAtUqaKwBcIAO46AdFhytG9QtFSwBAc12V6l4IMqNWwRQMETKlANbACxUkwAWgN4Vl1lSFgAYjw6eCY2MNQTZEtQ+TBKZFhMUAAzW1BGN2lGVATWLh4AAwBtZiCALwBdGtlM0ABhAVBMSjwuGAQkNC50CTz6eDxWbksMRVxWZiRQSGZoAvpKSApKABlKLQSWdgB+DtD9o5PE9gBZTdAAXlAAb1lQUABBdVAAETMAEAbi+oAAQv8ARJQeCutDGHDvgARaGCZGgACi0PgmIAYtD8piAOLQyyYgAS0MUmPA0MImIAUtCAFaYgDS0O8mIO0NgmIe0MgmIActDkJiAPLQyiYgAK0OgmIAitCAI6YgBK0PomIAytDWJjyNDUJjqNC8JiAGrQgBumIA6tCtJiABrQgAemIAmtDMJiAFrQppwgC+YNk1yotAYZ3gTy2b3eoDqHOqoG88H6+Rux1OSSToE4VFuhcem3TLRa-wzkY6Cmg0xUhASQUIlmQtng0ewuFj8Xu8AAPPrQPAvRUhFU+KlLAA+V7g8eT6eCKo1AAk724+QSoEp4Z3e4P5HD7W+51A2-elInU5QG6zOcoecH8aLz2vH4riarlItKA-xHjuv7DiO5ALhe4LQgCVz9qAWoAAwAIyvPscZ-iOAJLLAsByguYIxmhGFYl6ODlCOWLqngzCwCOKGoQANIClJYgcBxSgCC5EQhOBIchABMGHgQmOGUvA+GEcRiHkMJZEUfAVE0XRDEoUJrEAuxnHcbxUbXChADMok0EO4kAjxskCfJJlvORlGoNRtH0YxyFGVpPF8X2AkoQALKZWEQQCPSoCUflCQAhFZPkDshAX2UpKkuep8VaV0PzkF0lIRdF+n8QOUoolKGHIPA9oJNZuAOcpTnkA+65VCkeDwEubzkFV2IpSO7qsb6bXggAFJBC6DQAlK8S71WuT5VO6oDXuh-xCRNM0zqAI3jZNFANbNoC+gtoBLaAQngleGD0C1Z3AQU9HsFGk7QLY6CpvJLEUMJrG2V9aUUEVUpfYcBbDsWDZAA][Playground]])
+
+#+BEGIN_SRC typescript :tangle snippets/settersAndGetters.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+// Given an object with fields, create a type with settes and getters for those
+// fields
+
+// HINT: you can compose/join two objects with `&` constructor
+
+type SettersAngGetters<_O> = TODO;
+
+type R01 = SettersAngGetters<{ theme: "light" | "dark" }>;
+type T01 = Expect<
+  Equal<
+    R01,
+    {
+      getTheme: () => "light" | "dark";
+      setTheme: (value: "light" | "dark") => void;
+    }
+  >
+>;
+
+type R02 = SettersAngGetters<{ name: string; age: number }>;
+type T02 = Expect<
+  Equal<
+    R02,
+    {
+      getName: () => string;
+      setName: (value: string) => void;
+      getAge: () => number;
+      setAge: (value: number) => void;
+    }
+  >
+>;
+
+type R03 = SettersAngGetters<{}>;
+type T03 = Expect<Equal<R03, {}>>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> = [X, Y] extends [Y, X] ? true : false;
+
+export { T01, T02, T03, TODO };
+#+END_SRC
+
+- [[file:snippets/settersAndGetters.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrcysAcVgBu4eKEwiG2AFbtEoAO6xELUADNY4aKkgAaUEwBO4TInCjQiAJ4AHUwqWhI4RCcij4qUAHMnJ-a5UM+uYsDI48quqakNxUABIAkgByACoAXKAWDACuemJ6DAC2VqHgwJIMCOZyDKAS0kx08orKAAYAZC358JCI+lkNgdyWNqAAyj7gfgCC8J68E34APAD6APIAfKAAvKDJqwAiqwDcQ9amAEoADACM22MLkDNzD4sA3sHgBeDpAERwnixED9QAAfUA-VCYfQcYEAX3WJ2GpmSNzuAFEiDYGotyKBQGiAI5ZTDQHF4vFXa7aXHk1408leJzJNhfdIACgAlNtNn9YACgaDwZDoT8Tgy8Y5EMzPt9QGyBCSsrLefzgWCIVCYVytpsBBVUGLybCaetyAjTiMrgAmO7jZyTR6zeb2pbveCYVkOXoITxHUTedLwLIFbCTUDwxFnXaXG07DFYxBk-FEklJikx6kMunixmIRIe2Wc7le-Q+w0MyX5z3yxWynql2ba3X68vk7yIKYBuVN0BBkOTVsSpydwsK6BKwPB0P6Ht62AG+nhk1mk7kJGgK4AZltDyezt8kDeEbXUZR27jmJki0JxNJW90r3h5pPIz2hzuhCE+kjI3jV+SEAkMIWjmH04CbDsyQ-qYN6pgAGroACaEGgAA2ghoCIQAuoBJjuK4qGIbocE4QA-KBSqgOkKgko4q7EMU+iyO8KJUtGVq6GenEHKs4YnEAA][Playground]])
+- [[file:solutions/settersAndGetters.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/PTAEHEEsDcFMDtQENEHsBGArWBjALqAO6R4AWoAZpLADYAmAzgDSg4BOsSesyoeAngAcexMqAaw83Bsnh1QAc0nc2MiqjZ9SqCQCgQlavQa79YABIBJAHIAVAFyh+qAK6sUrVAFtBO2MExUSEQ8QlRQDGx8GVFyAAMAMjjPeAY8Nhd8DVMDQQ4pajYAWkgFeA1YXQFhUABlZVhVAEF4BXAG1QAeAHkAPlAAXl1QEdAAbwBtAGlQYNAAa1hnClBu0ATxdOCFZBk4pTwAEjGAYSRBEiQaSAAvWE6p3oBfOIBdRwAKAEpB-u7p15PdbDUaTGZzRbLVbrTZsba7UBxCRHU7nS7XO4PZ5vT7QK4uWCOf5TV4-Ab9aBBOhPUzVHgAJQADABGQZ1DoMFptDmdMZaWBeQmgABE1wUpDwwtAAB8RXQkGx5lKnr0ANxVIQ8WwstkAUQAHsJ8J0QbqAI4uK4m0agJnMpggkZjR2jA62UgCoXfX4isUSqWy4XyxXC9U2kbI92e3H4oWi0r+mVyhVKskUqlh0Y0ka9XRq2ma22MgBMbPqUkanNa7QrXT58CQgscaThrVVyCUjngLi86EaoBV6rpoG1pYGoANRrw1onFqtLqZxYdNud4cUkmsja9adh20zNuRm6boA+eJoBObW1aO8pkDo+9dkianZPO+7vcaD4jT5fp9jXZ7Ps2BvDMXWzUBc3zDUaiZABmMsOS5GsVAYXlB2grVGXg8dJ1wadzUtGhOjglgxhVKDh1sboABE1nHeBYDgNgh0LXDjVsUBYH1bg5BkdICX6cdbBYmoCKtAANFgAE1BNACZJNAKTXk47iEEYOSpJYcTlIAfj4DIeEcCgrgkdVdC43w2AIPltXtEcSxYbVYMcmi1iedUgA][Playground]])
+
+* Final Challenge: JSON Schema to TypeScript
+
+TODO
+
+* Final Challege: Type Safe MongoDB
+
+TODO
