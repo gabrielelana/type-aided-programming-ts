@@ -1433,8 +1433,6 @@ export { T01, T02, T03, T04, TODO };
 - [[file:snippets/toLowercase.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrcysASQFsADnn7gkoRAE9B4UAFdEsOFNAAVBgBkGAd3AAnJpkiyjoBKEiJM8VJj2pQcbHruSeoFokSDIALhDagQB0UjKQTHqwgojQ1gDmQQx6ccCozJDALNao2AwMHMAKSrBSyKFQQZ780ADE0Dr6hsaWkfBx5e4M8NCSoABmSaCsdphMiPqQZvCgAAYA2gCCyABaALoz3FQAwtagkgxyoGlmiKDaJSwHp1kAbghxoF2yTF3oil39g+A3+r3DLmN9AB+bjlNSaBoGIzgAA8AH0AMoQEhiVCTFr3AB8oAAvGoAPIAEXxAG5QdJZAAlAAMAEZceCtLoocYYQAiAASAFENBp8WzMWSwao6QyuUQZGMYVyAI5yTDQGE02kAGlAbLY0HqAsF5JkoBpACYGeomY1oeyOeAtQwBUKKWpqca8eLJYhpXKFUqnWqNdbtZjdeQwTSAMwmiHMpqwtl24MOkXhl0S9ju2XyxVh306snx-U0gAsEbNLJjWwWqi2HILhoAhHHhdSi8m3R6M96C77DIhWDX64Hc8KifiGYQfnp7frXamYapkeMbJNEHo5OBsXjVJPZOmvQANNUATXX5FAoAAFLPMWeAJS47Fz4gLtGgXegIGgem+UCG2+P1GTS8bzvNR53-UADzfD9QC-Q0T1PSDl1XODTy-PoFWMXNiEEJJTgAb0dVVHUNNVExIpsSOHUAAF8ySAA][Playground]])
 - [[file:solutions/toLowercase.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/PTAEEkFsAcBsFNLwHYBdSoJ7XqArqgJayFagAqA9gDKUDu8ATgMYCGAzrh6IcqO6lbIAJq0bDQJAEaMxmAFAhQAC1Spo7AFwg6ugHRYc7Zo0LRUsIQHM9lRleDDKzdsGVDhUypQDWwAsSkmAC0hvDseqqQsADEsPRMbJwCpshWYYpglMiwmKAAZnagzO6yzKhM7Dx8AAYA2gCCwQBaALo18pmgAMJCoJiUeKBOPOh0pMqD6O4AbrxWoNm4zNnCpITZBUXwM0x5JWKs5UwA-J1hFDQJLBzwALKs0KAAvKAA3vKgoA2aoABErD+AG5PqAAEK-P5SYGg7qQ5gwr4AEUhwkRoAAopD4OiAGKQ-LogDikKs6IAEpDlOjwJDCOiAFKQgBW6IA0pCfOjqJDYOi7pDIOiAHKQ5DogDykMo6IACpDoOiAIqQgCO6IASpDGOiAMqQ9jo8iQ1DogCqkLw6IAapCZuiAOqQujogAakIAHuiAJqQzDo5qQgBeMIAviCutBGPA1IQmMFCFZkHZ4PILlRaAwbpwADy60DwD0VERVFLzAB8L1B+cLxeEVRqABI3rx8kxQOTQ83W+3yKGOl8TqAm29yQWiyh66AfPABvlLpnErcHk8hxnrkl7o86uTWr9O8311nNznyOX+6DIX9zthcBqAAwARheC43txzf3JGOo1Alf3LILpk+L4Yh6ODlDmGKqngrCwDmD6PgANP8yjwLA8T-gBN44KAD4AEwvkeS65p+aEYVhQEEa8oHgagkHQbB8H3nhyF-Kh6EyuWWFpreuH3gAzIRVzHu+fz-oBvHkAJIFgfAEFQTBcEPvxrGYRGFwPgALEJi7ZvAH7dA05DdOSml4QAhOJPE4VJ2nUbJ8kMUp96aaxbCoCUZmWVx6mSRKSISi+yA7EwEk4TRcl0eQ451lUqCMHg8CVq85BhbgCmMa6yHesloIABSnuWeUAJQvJW0W1pOVSuqAQ7Pr8eGlZVJagIVJVlRQMVVaA3q1aA9WgHhoKDhgCWpl8Xy-PksGcBGhbQHY6BvBQT7IVJLErSpK2uRQ-mBeG8hAA][Playground]])
 
-TODO: smartGet exercise
-
 * Mapped Types
 
 Mapped Types is about transforming objects.
@@ -1713,8 +1711,66 @@ export { T01, T02, T03, TODO };
 
 * Final Challenge: JSON Schema to TypeScript
 
-TODO
+Convert a JSON spec known at compile time to the type of the object result of
+the JSON spec validation when the input is valid.
+
+Follow the [[https://json-schema.org/specification][specification]] and use this [[https://github.com/json-schema-org/JSON-Schema-Test-Suite/tree/main/tests/draft2020-12][test cases]] as a reference.
+
+Try to start from the bottom and build up from it.
+
+#+BEGIN_SRC typescript
+const schema = {"type": "string"} as const;
+
+type X = FromSchema<typeof schema>; // string
+#+END_SRC
 
 * Final Challege: Type Safe MongoDB
 
-TODO
+Write a type that given the type definition of a MongoDB object will create a
+type for the first argument of the the ~db.collection.find~ method representing
+the query on those type of objects.
+
+See the [[https://www.mongodb.com/docs/manual/reference/method/db.collection.find/#mongodb-method-db.collection.find][function documentation]] and [[https://www.mongodb.com/docs/manual/reference/operator/query/#std-label-query-projection-operators-top][the available operators]].
+
+* Final Challenge: Smart GET
+
+#+BEGIN_SRC typescript :tangle snippets/smartGet.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+// Type the `get` function so that the return type is the type of the field in
+// the object `T` following the path `S`
+
+declare function get<T, S extends string>(obj: T, path: S): TODO;
+
+// several object keys
+declare const o01: { a: { b: { c: string } } };
+const r01 = get(o01, "a.b.c");
+type T01 = Expect<Equal<typeof r01, string>>;
+
+// objects and arrays
+declare const o02: { author: { friends: [{ age: 29 }] } };
+const r02 = get(o02, "author.friends[0].age");
+type T02 = Expect<Equal<typeof r02, 29>>;
+
+// accessing a precise index of a tuple type
+declare const o03: { author: { friends: [undefined, { name: "Bob" }] } };
+const r03 = get(o03, "author.friends[1].name");
+type T03 = Expect<Equal<typeof r03, "Bob">>;
+
+// several tuple types
+declare const o04: [1, 2, [3, [{ title: "🎉" }]]];
+const r04 = get(o04, "[2][1][0].title");
+type T04 = Expect<Equal<typeof r04, "🎉">>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { T01, T02, T03, T04, TODO };
+#+END_SRC
+
+- [[file:snippets/smartGet.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrcysAFQE8ADuFCI2oAAYBzcIgmgAZgFd4TRLAbxQkBqJaZEekQCdZS41sRCRGI6OugGCuwtjhoqUAh52G2AFbshhK88goM0NAMAO4IUnaCBiySAMoS3Kjs0JimiipqGloyiAA8vAA0oCkQJODwqJDaiMZxAHwAFH7+AFygFaCJYr0pAJS9vADyACITANzcVJDgAG7gxpjQjgFBoBzg-JDkmUzZuUyakIYMAAwAjL0A3qCYj6DYr0y9ly3w8QC+oABf3m53gl1AxjuoAAvKBip07pUAESYAB02FRTCRI3mVmEfShsIAokRhGoSkSAI5KDYlPHgJwQxFNH5SVqteY+LpBRqYerPYzrA5HLI5ESg8E3ABMr0wSjEDGMrwULTqDV6AG0npgZL0pQBOQEAXUBgJBF0MkKlMLhsgRUuRcoVxlRKrc9UgGuuRtROvA2NxDl412txNJQQp1Np9MZVsqBvZnKomCYTCgkDizwGpiYGBs9WIjmcmFESkEeHswhFJzFoAlV2uAGZZfKWIrlaqPZqVJlXIRUJUnvBMABbcC9JEAIT8SONpuB5HrTMbNvhN0bjtbitdnYaGtuPuHY4D5HpBJXYbJpSpNOgdOssabyOn2CRiYWYCWq3Wm0QZYr9KHMcpzihajjXAALJqtzxpUGobqAWqiLAiB4BOgA8G4Akfuzn8Rp4eaYKWpBq52jcEHIhqUpGvu1Heqi6iof6OKnkGxGXhGN7Rg+ziQuRoBIlhb4ctwZ6TDMNqEN+gb4iSV5lDUiBqo0zRKOArQ2rw0kiJxd4ABqVAAmup0LkKAoDtGUHQjDC6m8ApSmgLpoAAPygLcoB6tZxCKR6oCWe01nQrZ9m+QZLluR5oBSqZZnhSp4AxWZvQKBsSycsQgiKoYTzBjBBIOuelTBnxYkTGa5BAA][Playground]])
