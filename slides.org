@@ -1714,15 +1714,26 @@ export { T01, T02, T03, TODO };
 Convert a JSON spec known at compile time to the type of the object result of
 the JSON spec validation when the input is valid.
 
-Follow the [[https://json-schema.org/specification][specification]] and use this [[https://github.com/json-schema-org/JSON-Schema-Test-Suite/tree/main/tests/draft2020-12][test cases]] as a reference.
+Follow the [[https://json-schema.org/specification][specification]] and use this [[https://github.com/json-schema-org/JSON-Schema-Test-Suite/tree/main/tests/draft2020-12][test cases]] as a reference (another,
+perhaps more approachable [[https://ajv.js.org/json-schema.html#json-schema-versions][reference]]) .
 
-Try to start from the bottom and build up from it.
 
 #+BEGIN_SRC typescript
 const schema = {"type": "string"} as const;
 
 type X = FromSchema<typeof schema>; // string
 #+END_SRC
+
+Try to start the bottom and compose from it, implement in order:
+- primitive types ~{type: "number" | "integer" | "string" | "boolean" | "null"}~
+- nullable ~{type: _, nullable: true}~
+- array
+- object
+- enum
+- const
+- oneOf
+- anyOf
+- allOf
 
 * Final Challege: Type Safe MongoDB
 
