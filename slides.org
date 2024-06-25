@@ -1151,9 +1151,293 @@ export { T01, T02, T03, TODO };
 
 * Recursive Types
 
-TODO
+To loop over types we will use recursion.
+
+More or less the pattern is always the same:
+- Destructure using ~infer~ the original type by naming the "first" piece and
+  and the "rest".
+- Do what you have to do with the "first" piece.
+- Use recursively the same type with the "rest".
+
+#+BEGIN_SRC typescript :tangle snippets/tupleToUnion.ts
+// prettier-ignore
+type TupleToUnion<T extends any[]> =
+  T extends [infer H, ...infer T]
+  ? H | TupleToUnion<T>
+  : never;
+
+type T01 = TupleToUnion<[string, number]>; // string | number
+type T02 = TupleToUnion<[true, false]>; // boolean
+type T03 = TupleToUnion<[]>; // never
+
+export { T01, T02, T03 };
+#+END_SRC
+
+- [[file:snippets/tupleToUnion.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEAcCcFMBdYJbUgWgQcwHYHsYChYBPcaUAFQFdwAbaM7AVUwW0wB4zRoAPWaTACYBnUAENMhANoBdAHygAvHlDkuvfsNCSEmAGbJQACQA0oAHQWd+yOWnLQAfiOgAPuSq16TFuzKz7AFygmNAAbsgA3HgExKRkAAwAjIruNHSMzKxskkKwkDroppgUALYARshyEaAgoLn5mOiuwaUVkDEk5PEATCmUaV6Z7JJ5FNCmuqLUQtBVNWBl2Ni04h1x8QDMfR7p3lkystW1IeHteDzguLCgAN5diaYJ3Y+boAC+UUA][Playground]])
+
+** Tail Recursion
+
+The previous example it's corrent but it'not tail recursive, and for that it
+gets [[https://herringtondarkholme.github.io/2023/04/30/typescript-magic/][penalized by the type checker]], to ease this limitations we can turn it
+into a tail recursive implementation.
+
+#+BEGIN_SRC typescript :tangle snippets/tupleToUnionTailRecursive.ts
+// prettier-ignore
+type TupleToUnion<T extends any[], R = never> =
+  T extends [infer H, ...infer T]
+  ? TupleToUnion<T, R | H>
+  : R;
+
+type T01 = TupleToUnion<[string, number]>; // string | number
+type T02 = TupleToUnion<[true, false]>; // boolean
+type T03 = TupleToUnion<[]>; // never
+
+export { T01, T02, T03 };
+#+END_SRC
+
+- [[file:snippets/tupleToUnionTailRecursive.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEAcCcFMBdYJbUgWgQcwHYHsYChYBPcaUAFQFdwAbaM7AVUwW0wB4zRoAPWaTACYBnUAENMhANoBdADSgASqAC8oTNABuyAHwq8ocl179hoSQkwAzZKAAS8gHROL1yOWn7QAfnJVa9JhZ2MnklAB87bU8ALkUAbjwCYlIyAAYARhVfGjpGZlY2SSFYSAt0eUwKAFsAI2RpbTjQEFBi0sx0UAjK2uQkknJUgCYsyhyA-PZJEopoeUtRaiFoBqaWmuxsWnF+lNSAZlG-XMCCmUbmsHUtSESecFxYUABvQfT5NKGPg9AAXwSgA][Playground]])
+
+** Exercises
+
+#+BEGIN_SRC typescript :tangle snippets/unwrapAll.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+declare function all<
+  // `P` type parameter as a tuple of type `Promise<any>`
+  P extends [Promise<any>, ...Promise<any>[]],
+>(promises: P): Promise<UnwrapAll<P>>;
+
+// It must work with an arbitrary numbe of promises
+type UnwrapAll<P> = TODO;
+
+const r01 = all([Promise.resolve(20), Promise.resolve("Hello" as const)]);
+type expected1 = Promise<[number, "Hello"]>;
+type T01 = Expect<Equal<typeof r01, expected1>>;
+
+const r02 = all([
+  Promise.resolve(true),
+  Promise.resolve("!"),
+  Promise.resolve({}),
+]);
+type expected2 = Promise<[boolean, string, {}]>;
+type T02 = Expect<Equal<typeof r02, expected2>>;
+
+const r03 = all([
+  Promise.resolve(3),
+  Promise.resolve("Hello" as const),
+  Promise.resolve(true),
+  Promise.resolve({ key: "value" }),
+  Promise.resolve(["array"]),
+]);
+type expected3 = Promise<[number, "Hello", boolean, { key: string }, string[]]>;
+type T03 = Expect<Equal<typeof r03, expected3>>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { T01, T02, T03, TODO };
+#+END_SRC
+
+- [[file:snippets/unwrapAll.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc81d6TAE7hQAMwCu8JolgN4oTNGgAecqFBUABgAUNoRAE8ADsMODMAW3CJwA+ZHl6xhvKAYi9R4doENzGcEqY8PoAfBqqoFoQJODwqPYA2lo+fpABQaEANKAAdHnJvv6BwSEJALplmeQhABSGKf6QAFyRAJQtBakBAKrwAO4CmIYAgopKWiEhANzcVACSiKDmYpCLfQwCHKB9sIgs8nKC2LuDAvqg8GLm2MJuoPWFaZDkBsagvQNDo8oToAC8oAAKgB5AAiwJm5CYslWoAEAAYAIz-eSKGpJBppHJCSAMaAAN3ANQATPDWtlOv5sVA8YSagAiAAS4EUDHpdlA0Pgq1aZVaM1ewmIxik4FQyIBlLSSgSl2uNmyTJZ0DZZWmL08QKRKIAokQRYglDqAI5iBRKQV3BGI7LC9jWcWTSFc2EI4kohTQdERKXgam4glExACMTgck+zF+nG0on0gCE9PDal9-pjNQA3gBfcN8gWau2i1DuyWRmXYBh48BBbKrAQIADm2Szarzb0B8OLoD1BqNpvNlvcbtt+vtYuJTu4LsWCIAzB60QkI48ozTAzUZ0nIpHU2ulaz2Zh7FPNyno2vg6GT9uz3T06AOOB9C16fiFKH2dmqsnr6u6Ql6YIgz6PSfJVLmGpvAWDpziWy4ynKNwCIqzL7tk5aVtWoB3g+T6gLWDagJmNbBg25QthBwjtjBXYjlIvZmsoA5wvCM7DgaYozhOFFAmCwIooQhICK2wjdvaSiAtE1hxPYF7gCEKKAsJXZ9soAAa2QAJryX8EQ1OJtStP88kScQUnxKAqmgAA-KAyItMShmmbE5n6TUhl-MZknOfYGnWbZoD2REag2bJQUBaIChpJCwobIsd7tjaWrEtkVEpbxhEzEAA][Playground]])
+- [[file:solutions/unwrapAll.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/CYUwxgNghgTiAEAzArgOzAFwJYHtXygggB4AoeeAekvgAMAFW+DATwAcE3YoBbEDEDAIBnAs2RsICHImbsEDGDh5ZhIYlFQsAfLXLx68EAA8BqYKIDa9JSrUat2gDTwAdO5vLV6zTssBdfydSbQAKNltvYQAuAwBKWM87dQBVVAB3GCg2AEEiYnptbQBuUlJqeAj+bEEAWiwAc1QcOFJWDng0zOy8kkL4AF59QxMzC3hrSPssVERBeAAJZzd3GbmhABV-fQB+CYWXd1curNz8je1tiliAsrA8YQx4GAAGAEZBgiJQya81VzgwhwEAAbiBQgAmF5xFxJbwAkBA0HggBECxARBwKJE8HuqEecX8cVK7QQJg4mBAwA+AwMU3UllQyB4ACNBC40RiIFj-CU2vJ4Bt3p8AKLGCkYYgigCOyEIxFJMme7xc5PAAmpRVKpDxj2VEM+hAgP2G9IRSLBoQwMGQIBhpr+IHNwMtKIAhCj7RQ4f9AS7wQBvAC+9qJJIFaspwANtJ9DJZOGBIE0LkeMBmDRcwd54Y6Qpj8DFEqlsvlitkrwhqvF6qpEK1dweT1eAGZDd9LA7ks7kaEW166Y6e670ZjsVBRLqMAO48PwdbbTOzX7ewH4ABrEAsWIokGEW3YkPBb3LxH+n4o2BZFgoonBMP8jqRjVt2P04iM5lsmAc0fclEuAmSYpvAa6btu8Bphm8BBqm1oZgEOaPggQqvoWNaYCWcokOWyottWEpUi2DbIYKADyAAiZGfKgIBgjAuYIEW6rEBsRimCA5iiAuIDaJ8GyMYWpYkAAGi4ACafFDBQoSsWEcSDHxbGjJx4wifAewfLEEIKSpXHwHJoQKQMSnsWMojiRp8BafAEL6BQew8fZ8CxIghBqNq5ItE8a5Cm8Lj5gFLz4eRVEwaUQA][Playground]])
+
+#+BEGIN_SRC typescript :tangle snippets/withIndex.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+// Write a type that given a tuple will return a tuple where the elements are a
+// tuple with `[value, index]` where `value` is the value from the original
+// tuple an `index` is the numerical index starting from zero.
+
+// HINT: You can read the property "length" of a tuple/array,  T["length"]
+
+type WithIndex<_Tuple extends any[], _Output extends any[] = []> = TODO;
+
+type R01 = WithIndex<["a"]>;
+type T01 = Expect<Equal<R01, [["a", 0]]>>;
+
+type R02 = WithIndex<["a", "b"]>;
+type T02 = Expect<Equal<R02, [["a", 0], ["b", 1]]>>;
+
+type R03 = WithIndex<["a", "b", "c"]>;
+type T03 = Expect<Equal<R03, [["a", 0], ["b", 1], ["c", 2]]>>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { T01, T02, T03, TODO };
+#+END_SRC
+
+- [[file:snippets/withIndex.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrcysAdQCdYicKEyhEATwAOIxC0yJQAc1gA3cPFHiArlLygA7rGjRQ-cIm39NYy3pEG258Wwh4AthrqjnmHjvtDIRZQAAMAbVVMaG1wABpQBFRiAF1QwycRUKiY8HSMFxEc2NAAM34Gd0LQBkEVeGj-O31MTVCk4nzIavhtT0EmaMT4ZKJQSERMfkQEJTKKqoAvcAqAOm4qAAkASQA5ABUALlAATQZtUEHNc0xUaqkKmWmJUAAiPHglOVea0q1m8DAKb8TASBKgfbhd4aL4sV4pbiSGSgXjBbYjYgAHgA+vtdPpiMIRt1WhJwikEtiAPLaRBSWkQEgaVAk+BklKgAC8oHJAD4uRCqQARKkAbkR0hEACUAAwARgFqLk6NGmKhmHhvPFSJE+3lAoAokQZExEJiDQBHbTRTGyuUJcLq14JGUpFK8rUS5GygBMirRGKIateGoSr2wmu1kohMr93KNJrNlut0FtsYdTpdFJ54edoDlbo94vIOtAsoAzP7lYHg6G3hGw0xIyXo3rK-Hjewk1abRWMyG866HbmEgXh02Ej7C56W8j9sKqQLCOp+FHkQmu5j9oyiSzxPxYvzufs1yJkzaABoJE5H8igUAACi3vIfAEoufzt4Tmd0L6AAPz5qAxw+u+37EqAz5vh+EI7j+pwAUBIF3veiGIAe4AofexylNEkDgMWxBSLUigAN4xvaMY+gkbY0QuoAAL7ikAA][Playground]])
+- [[file:solutions/withIndex.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/PTAEHUCcEsBcFNQENSwJ4AdGwBZNqAObQBu8AdsqgK4YA2iA7tHXaJPLNZJSl-UxzwOqIaHgMAthVgBnZCKQAoEDQGhmuUAAMA2iSR1q8ADSho5ACbwAHgF1tGoSO0Gj8R9Hm5Eb46AAzSAB7SVFEYJhickMVMH4GZEptC2sbT28xcmppGABjQ3MrW1BZWCRIWAtCQJCwgC9hYIA6JTjQAAkASQA5ABUALlAATWDqUALKDiRLcNAMEKxKtFAAIgZyQlxV0GCAqgT4YArIJDQzUD7ddYotnFW7NtUFzirhAFpoQnJI+CV0LAQOA4LrFGwAHj6tEStgQVnkSHIaF0djMAHlqLAMJjxDY4ZYEUiUaAALygFEAPlJSlAl2hiFhFAJ5IsAWEnTMzS5rPZfUetIA-EDcKC0pCzLouc0MVjMRKOujMdjYNcNncHnY7BSaaAhjLlQBuNoAxAAJQADABGUnCkFg8HXJAPClGk2XK02gCiNiweVg4M9AEdqIZwRbLRLHaszObNRSXcbMGbzQAmG3gYGi2wO1ZOsyrABGztdSfdabJ3t9-qDIboYdTkdz0dAsYlheblrjCf+pYtAGZ05n7VH80X83liz3AX1zQOKz74H6A8HQ-3G3mW6jye2zJ22xOzCmu0ap4g+miACJom3keBkSAlwGVxf+vq4-HeSDGKlkvqPxA1qGAAaZjDD+OoABSQhSEEAJSklSb6MvCoBAaAQrWkMKbwchzLQXBCGXO+TLyMM6GgJhoApjqgqoF+fy0rSQwBIYsjwCetgYJEBAAN7uhGZZmDOfZCZe14AL5GkAA][Playground]])
+
+* Template Literal Types
+
+As their name suggests, /Template Literal Types/ are the type-level equivalents
+of template literals. You can use backticks (~``~) to create one, and
+interpolate other types inside of it using the ~`${...}`~ syntax.
+
+#+BEGIN_SRC typescript
+type Who = "World";
+type Hi = `Hello, ${Who}!`; // "Hello, World!"
+#+END_SRC
+
+** Interpolating Primitives
+
+#+BEGIN_SRC typescript :tangle snippets/interpolatingPrimitives.ts
+type SomethingAboutGabriele = `Gabriele ${string}`
+
+// @ts-expect-error
+const r01: SomethingAboutGabriele = "Gabriele"
+// @ts-expect-error
+const r02: SomethingAboutGabriele = "Luca is a nice fellow"
+
+const r03: SomethingAboutGabriele = "Gabriele is a nice fellow"
+const r04: SomethingAboutGabriele = "Gabriele " // ok, because an empty string is a string
+
+export { r01, r02, r03, r04 };
+#+END_SRC
+
+- [[file:snippets/interpolatingPrimitives.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAyg9gWwsAFgSwHYHMCCAjOAV2AHEBDPAJzQgBtoBeKAA3KpvqgBIBvAZ2DVsAX2YAoMQHpJUAALA+AWggAPSAGNgyypTiUx6uBgFRKABgCMALliJk6bPiKkK1OoygAiNm-qepMvJKqhpaEDp6BkYm5gBMNvBIqJi4BMQ+HB6eADKE6mRQaHxQBRho6tAAZnS0cADu-lHGwKZmAMwJdsmOaS7s7lBM3q6ZhcWl5VU19f6Gza0ALJ1JDqnOGQNDG5yeUNJQcADWADRQeBD5hHzQZBhQEAhgoFACQlhjJS+CKRIhei08VoWU5xEHtMELKDCADcYiAA][Playground]])
+
+** Destructure with Anchors
+
+Using the ~infer~ keyword, we can pattern-match on a string literal to split it in
+several parts.
+
+#+BEGIN_SRC typescript :tangle snippets/destructureWithAchors.ts
+// prettier-ignore
+type Split<T extends string> =
+  T extends `${infer P} ${infer S}`
+  ? [P, S]
+  : never;
+
+type T01 = Split<"Gabriele Lana">[0]; // "Gabriele"
+type T02 = Split<"Gabriele Lana">[1]; // "Lana"
+
+type IpClasses<T extends string> =
+  T extends `${infer O1}.${infer O2}.${infer O3}.${number}`
+    ? {
+        a: `${O1}`;
+        b: `${O1}.${O2}`;
+        c: `${O1}.${O2}.${O3}`;
+      }
+    : never;
+
+type T03 = IpClasses<"127.0.0.1">;
+// type T03 = {
+//   a: "127";
+//   b: "127.0";
+//   c: "127.0.0";
+// }
+type T04 = IpClasses<"192.168.1.100">;
+// type T03 = {
+//   a: "192";
+//   b: "192.168";
+//   c: "192.168.1";
+// }
+
+export { T01, T02, T03, T04 };
+#+END_SRC
+
+- [[file:snippets/destructureWithAchors.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEAcCcFMBdYJbUgWgQcwHYHsYChYBPcaUAZXABsFYAeAFVGgA9ZpMATAZ1C9kgSZ0APlABePKFCMWbTjwAGAEgDeggGbJQABQC+oVRq1ldCyaAD8oANraANOQC65gFyhM0AG7IA3HgLEpPQADACM4uRUNLQARADiAIYARgLQlKQAMgmYCTHC1sGOPqAgoPHJqekxASTSwQBMERTUdOUpSOmgWTl51qFFJWAx3bn+RLUAkuAAwpQJXFzQXAxMrOzcvPyCIuLmMmvyoMpqmJqQoADyoboAdIanWhf1t-dnlwDMLyqYAK4AtklkKZzFIrCoQVJIQk3McrqY-JDEaAkjDVHC7ionvCIYiAMaozHXDFY4mfBQIpG6CFuDzeSB+GpBYLvCJTWbzRbLGKheoAdhuwQFN1CeT8pXGTJZYlA4NKUmhZR5vJiYrAUhRir5ApVeDloHxmv5guCOtKVIldQALKyZnMFktYqEAJz1YUANgAHMLhcETcJVaALSEpTLdWrQAruS7TeGNVHXaFPTHIQb4+6vSKA1S8CxwLhYDK6qEHCF6iXmeXrbo-EA][Playground]])
+
+** Destructuring without an Anchor
+
+The string is split after the first character, with this we are able to compute
+over a string one character at the time from left to right.
+
+#+BEGIN_SRC typescript
+type Split<T extends string> = T extends `${infer P}${infer S}` ? [P, S] : never;
+
+type T01 = Split<"Gabriele Lana">[0]; // "G"
+type T02 = Split<"Gabriele Lana">[1]; // "abriele Lana"
+#+END_SRC
+
+This means we are able to parse an arbitrary string 🤯.
+
+** Exercises
+
+#+BEGIN_SRC typescript :tangle snippets/aTypeForEmailAddress.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+type EmailAddress = TODO;
+
+// @ts-expect-error missing domain
+const r01: EmailAddress = "gabriele";
+
+// @ts-expect-error still missing domain
+const r02: EmailAddress = "gabriele.lana";
+
+// @ts-expect-error missing TLD in domain
+const r03: EmailAddress = "gabriele.lana@gmail";
+
+// OK
+const r04: EmailAddress = "gabriele.lana@gmail.com";
+
+// @ts-expect-error `dev` is not a valid TLD domain (list only a few)
+const r05: EmailAddress = "gabriele.lana@gmail.foo";
+
+type TODO = never;
+
+export { r01, r02, r03, r04, r05, TODO };
+#+END_SRC
+
+- [[file:snippets/aTypeForEmailAddress.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrc8xATwAdwoAKIBbTLGgBBVKgBOUSKAC8oACoB5ACIaA3Nyq16xQUxTg5chnNCiMkBAHNQqBuITkmDeJESg5AAwAjABcIu7SsgqQSqoARI44crDgeHH6lGBGyCbs5pbWoL6S0Lb2Ti5uEvCe3r7+AQBMYWISkfKKKqAJSSl4AHTQmPCY6QZZdDlEpvlWNnYxFWoAMlqgCJXuNV4+foEAzC0RMh0xXT3Yyangg8OY1I4RY5mgGgDStbsNACxHbSfRWLdRKXPo3IYjB4RfpeUTPQyTXJmHIFGwAA1Q4AAbmj1kp4Aw-JhQFjMHBUOpVptqqAABRwereaC8UDEgBm4AA7gBKT71QIAVj+kgBnXiIKuAwh90ebX6bIYDGefEE6m0Gi6hCxFgyJmsfgA3g0ggAaBqNM0HS0Bb7WgVmzQ6UAAX30QA][Playground]])
+- [[file:solutions/aTypeForEmailAddress.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/C4TwDgpgBAKgMgESgXigIgMYHsC2aoA+6AlsPkWhAK7noAmEAbmgNwBQokUAojgIbEANgEE6dAE4QAzlJRQABgBIA3lODjiAOwDmAXwACKtRp26AdCvgJd89mwD09qPuBSAtBAAekDMA-jxLHEoHGIZLW0oOlwBTTZsTTUocQAGAEYALh5+IVEJaVlUNG0+ACMNCEEIVjYHJxd3Lx8-CACgqDUhQRCwqQiomK14rETgZJSAJizeARExSRk5YrKKqrNBPk0+GrrnVw9vCF9-QODQ8J1YRCgtAZy4hKTUgGZpnLn8xaKS8uJKiHWmz4+m07x2jigAHkANLDUbjAAsb1meQWhXQP1WAI2WxB7zM2DwdghDQOzRO7XkDEY8husk0WDGfCgjD4gmIdCuSGi9ygAAp2UkRoIQFBmQAzCAAdwAlHCnikAKzI3LzApLTF-NY44Gg2ZmcVYLA7TjQGCQhCQuSaJitOxNIJjZTjNIAGnGE3dLy9KQRPsV7vNlqgunYQA][Playground]])
+
+#+BEGIN_SRC typescript :tangle snippets/toLowercase.ts
+// eslint-disable-next-line
+// @ts-nocheck
+
+// Implement type utility ToLowercase as in standard library
+// https://www.typescriptlang.org/docs/handbook/utility-types.html#lowercasestringtype
+// only for characters in `[A-Z]`
+
+// Can you do it without having one condition for every character?
+
+type ToLowercase<_S extends string> = TODO;
+
+type R01 = ToLowercase<"HELLO">;
+type T01 = Expect<Equal<R01, "hello">>;
+
+type R02 = ToLowercase<"Hello">;
+type T02 = Expect<Equal<R02, "hello">>;
+
+type R03 = ToLowercase<"">;
+type T03 = Expect<Equal<R03, "">>;
+
+type R04 = ToLowercase<"CATCH42!">;
+type T04 = Expect<Equal<R04, "catch42!">>;
+
+type TODO = never;
+type Expect<T extends true> = T;
+type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
+    ? true
+    : false;
+
+export { T01, T02, T03, T04, TODO };
+#+END_SRC
+
+- [[file:snippets/toLowercase.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/PTAEFMGcBsEsDsAuBaAJrSBDARtcz5wAPFOQgKBFAAFFICB7AYwAtwmBrcysASQFsADnn7gkoRAE9B4UAFdEsOFNAAVBgBkGAd3AAnJpkiyjoBKEiJM8VJj2pQcbHruSeoFokSDIALhDagQB0UjKQTHqwgojQ1gDmQQx6ccCozJDALNao2AwMHMAKSrBSyKFQQZ780ADE0Dr6hsaWkfBx5e4M8NCSoABmSaCsdphMiPqQZvCgAAYA2gCCyABaALoz3FQAwtagkgxyoGlmiKDaJSwHp1kAbghxoF2yTF3oil39g+A3+r3DLmN9AB+bjlNSaBoGIzgAA8AH0AMoQEhiVCTFr3AB8oAAvGoAPIAEXxAG5QdJZAAlAAMAEZceCtLoocYYQAiAASAFENBp8WzMWSwao6QyuUQZGMYVyAI5yTDQGE02kAGlAbLY0HqAsF5JkoBpACYGeomY1oeyOeAtQwBUKKWpqca8eLJYhpXKFUqnWqNdbtZjdeQwTSAMwmiHMpqwtl24MOkXhl0S9ju2XyxVh306snx-U0gAsEbNLJjWwWqi2HILhoAhHHhdSi8m3R6M96C77DIhWDX64Hc8KifiGYQfnp7frXamYapkeMbJNEHo5OBsXjVJPZOmvQANNUATXX5FAoAAFLPMWeAJS47Fz4gLtGgXegIGgem+UCG2+P1GTS8bzvNR53-UADzfD9QC-Q0T1PSDl1XODTy-PoFWMXNiEEJJTgAb0dVVHUNNVExIpsSOHUAAF8ySAA][Playground]])
+- [[file:solutions/toLowercase.ts][Solution]] ([[https://www.typescriptlang.org/play/?#code/PTAEEkFsAcBsFNLwHYBdSoJ7XqArqgJayFagAqA9gDKUDu8ATgMYCGAzrh6IcqO6lbIAJq0bDQJAEaMxmAFAhQAC1Spo7AFwg6ugHRYc7Zo0LRUsIQHM9lRleDDKzdsGVDhUypQDWwAsSkmAC0hvDseqqQsADEsPRMbJwCpshWYYpglMiwmKAAZnagzO6yzKhM7Dx8AAYA2gCCwQBaALo18pmgAMJCoJiUeKBOPOh0pMqD6O4AbrxWoNm4zNnCpITZBUXwM0x5JWKs5UwA-J1hFDQJLBzwALKs0KAAvKAA3vKgoA2aoABErD+AG5PqAAEK-P5SYGg7qQ5gwr4AEUhwkRoAAopD4OiAGKQ-LogDikKs6IAEpDlOjwJDCOiAFKQgBW6IA0pCfOjqJDYOi7pDIOiAHKQ5DogDykMo6IACpDoOiAIqQgCO6IASpDGOiAMqQ9jo8iQ1DogCqkLw6IAapCZuiAOqQujogAakIAHuiAJqQzDo5qQgBeMIAviCutBGPA1IQmMFCFZkHZ4PILlRaAwbpwADy60DwD0VERVFLzAB8L1B+cLxeEVRqABI3rx8kxQOTQ83W+3yKGOl8TqAm29yQWiyh66AfPABvlLpnErcHk8hxnrkl7o86uTWr9O8311nNznyOX+6DIX9zthcBqAAwARheC43txzf3JGOo1Alf3LILpk+L4Yh6ODlDmGKqngrCwDmD6PgANP8yjwLA8T-gBN44KAD4AEwvkeS65p+aEYVhQEEa8oHgagkHQbB8H3nhyF-Kh6EyuWWFpreuH3gAzIRVzHu+fz-oBvHkAJIFgfAEFQTBcEPvxrGYRGFwPgALEJi7ZvAH7dA05DdOSml4QAhOJPE4VJ2nUbJ8kMUp96aaxbCoCUZmWVx6mSRKSISi+yA7EwEk4TRcl0eQ451lUqCMHg8CVq85BhbgCmMa6yHesloIABSnuWeUAJQvJW0W1pOVSuqAQ7Pr8eGlZVJagIVJVlRQMVVaA3q1aA9WgHhoKDhgCWpl8Xy-PksGcBGhbQHY6BvBQT7IVJLErSpK2uRQ-mBeG8hAA][Playground]])
+
+TODO: smartGet exercise
 
 * Mapped Types
+
+Mapped Types is about transforming objects.
 
 TODO
 
