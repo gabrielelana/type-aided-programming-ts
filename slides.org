@@ -1743,6 +1743,32 @@ the query on those type of objects.
 
 See the [[https://www.mongodb.com/docs/manual/reference/method/db.collection.find/#mongodb-method-db.collection.find][function documentation]] and [[https://www.mongodb.com/docs/manual/reference/operator/query/#std-label-query-projection-operators-top][the available operators]].
 
+Start by taking a document type and add all the internal fields with the
+corresponding path
+
+#+BEGIN_SRC typescript
+// The following type
+type I = {
+  name: {
+    first: string,
+    last: string,
+  },
+  age: number
+};
+
+// Should become
+type O = {
+  name: {
+    first: string,
+    last: string,
+  },
+  age: number,
+  "name.first": string,
+  "name.last": string,
+}
+#+END_SRC
+
+
 * Final Challenge: Smart GET
 
 #+BEGIN_SRC typescript :tangle snippets/smartGet.ts
