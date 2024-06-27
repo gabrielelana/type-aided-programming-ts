@@ -87,9 +87,9 @@ export { configuration };
 
 * Why TypeScript?
 
-Why TypeScript? TypeScript type system is (incidentally) more advanced than what
-you (probably) think. TypeScript's type system is a full-fledged turing complete
-programming language, limited, but powerful.
+TypeScript type system is (incidentally) more advanced than what you (probably)
+think. TypeScript's type system is a full-fledged Turing-complete programming
+language, limited, but powerful.
 
 We will refer to the subset of TypeScript that deals with types and guides the
 type checker as the "Type-Level TypeScript" programming language.
@@ -183,7 +183,7 @@ type Y = never & string; // never
 #+END_SRC
 
 It can always be placed on the right side of an assignment and never on the
-left (TODO: see assignability).
+left (see: [[*Structural Typing, Subtyping & Assignability][Structural Typing, Subtyping & Assignability]]).
 
 #+BEGIN_SRC typescript :tangle snippets/never.ts
 // @ts-expect-error only never can be assigned to never
@@ -205,7 +205,7 @@ const companies = ["Google", "Facebook", "Apple"] as const;
 
 type Companies = (typeof companies)[number];
 
-function unreacheable(_: never): void {
+function unreacheable(_: never): never {
   throw new Error("unreacheable");
 }
 
@@ -238,7 +238,7 @@ switch (x) {
 }
 #+END_SRC
 
-- [[file:snippets/unreacheable.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBKC2AHAhmAlgUwjAvDA2gEQDiIIA5gDYaEA0MhAYssBgEZkDWdDAgoomqEAujGTZQkKAG4AULKgBPRBhgBhEElSZseABRKVIAGZxNKdFgCU+MAFd4bDACdhc2cbthgUNOBhezhgsABbBbNR6APoAXDBgGABuLlZxiSBoACYwAN6yMDBQIc4gAO7xGOUAos4lznqEgcHAYcgRNFZyAL7ymRjAlMhBZlIwAB5xGlqWEO4QpWhQLTB6Y1a5+XDiqiRkVDQxmwUA9McwmSAwEJoYRWhg5EcwbEHInHIFwNt8AkKHBSczhcrjc7g8ni9gu9Nl8IDtmKwOCBuP8AadzpdrvBbiF7o8Ac9XtCCn1jMg7JQoKiCk1QuFImtuvJ5otlqt1nlPt9dhQ-k90cCsTi8RCiR8tnCfoIDvygZjQbjwQTIW9xaTyZTqTB0QABKAQAC0GDGKh8RtqIGcMF4znIDgwYFgJkKylUAAMmCx2FxCG6YGhsGAQLBxBA0OQwG1qIVLoZ3Qlks43U9aS16Rh2UygA][Playground]])
+- [[file:snippets/unreacheable.ts][Snippet]] ([[https://www.typescriptlang.org/play/?#code/MYewdgzgLgBKC2AHAhmAlgUwjAvDA2gEQDiIIA5gDYaEA0MhAYssBgEZkDWdDAgoomqEAujGTZQkKAG4AULKgBPRBhgBhEElSZseABRKVIAGZxNKdFgCU+MAFd4bDACdhc2cbthgUNOBhezhgsABbBbNR6APoAXDBgGABuLlZxCcnOMADesjAwUCHOIADu8RilAKLORc56hIHBwGHIETRWcgC+8gAmGMCUyEFmUjAAHnEaWpYQ7hDFaFBNMHqjVtm5cOKqJGRUNDEbeQD0RzDdIDAQmhgFaGDkhzBsQciccnnAW3wCQgd5x6dzpdrrd7o9nsE3htPhBtsxWBwQNw-v8TmcLld4DcQncHv8ni8oXlesZkHZKFAUXkGqFwpFVp15HMFksVmsch8vjsKL9HmigZjsbjwYT3ptYd9BPs+YCMSCcWD8RDXmKSWSKVSYGiAAJQCAAWgwoxUPkN1RAmV4znIDgwYFgJnyylUAAMmCx2FxCC6YGhsGAQLBxBA0OQwC1qPkLoZXekXC7HjSmnSMGzGUA][Playground]])
 
 * Special Types: Unknown
 

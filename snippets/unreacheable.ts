@@ -2,7 +2,7 @@ const companies = ["Google", "Facebook", "Apple"] as const;
 
 type Companies = (typeof companies)[number];
 
-function unreacheable(_: never): void {
+function unreacheable(_: never): never {
   throw new Error("unreacheable");
 }
 
